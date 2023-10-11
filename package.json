@@ -5,7 +5,9 @@
   "main": "app.ts",
   "scripts": {
     "start": "nodemon app.ts",
-    "test": "npm run eslint"
+    "test": "npm run eslint",
+    "lint": "eslint .",
+    "format": "prettier . --write"
   },
   "repository": {
     "type": "git",
@@ -19,7 +21,12 @@
   "devDependencies": {
     "@types/koa": "^2.13.9",
     "@types/koa__router": "^12.0.1",
+    "@typescript-eslint/eslint-plugin": "^6.7.5",
+    "@typescript-eslint/parser": "^6.7.5",
+    "eslint": "^8.51.0",
+    "eslint-config-prettier": "^9.0.0",
     "nodemon": "^3.0.1",
+    "prettier": "3.0.3",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   },
