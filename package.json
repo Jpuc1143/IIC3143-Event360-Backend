@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon app.ts",
     "test": "echo 'TODO: implement testing'",
-    "build": "tsc",
+    "build": "npm install && tsc",
     "lint": "eslint .",
     "format": "prettier . --write",
     "prepare": "husky install"
