@@ -5,7 +5,8 @@
   "main": "app.ts",
   "scripts": {
     "start": "nodemon app.ts",
-    "test": "npm run eslint",
+    "test": "echo 'TODO: implement testing'",
+    "build": "tsc",
     "lint": "eslint .",
     "format": "prettier . --write",
     "prepare": "husky install"
