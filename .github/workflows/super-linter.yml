@@ -10,7 +10,7 @@ on:
   #  push:
   #  branches: [ "master" ]
   pull_request:
-    branches: ["master"]
+    branches: ["master", "develop"]
 jobs:
   run-lint:
     runs-on: ubuntu-latest
@@ -27,3 +27,5 @@ jobs:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: "master"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JAVASCRIPT_DEFAULT_STYLE: "prettier"
+          TYPESCRIPT_DEFAULT_STYLE: "prettier"
