@@ -8,6 +8,7 @@
     "test": "echo 'TODO: implement testing'",
     "build": "npm install && tsc",
     "lint": "eslint .",
+    "lint-check": "eslint . && prettier . --check",
     "format": "prettier . --write",
     "prepare": "husky install"
   },
