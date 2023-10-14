@@ -2,7 +2,7 @@ import Koa from "koa";
 import bodyParser from "@koa/bodyparser";
 import { router } from "./routers";
 
-let app = new Koa();
+const app = new Koa();
 app.listen(3000);
 
 app.use(bodyParser());
