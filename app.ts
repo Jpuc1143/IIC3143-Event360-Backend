@@ -5,24 +5,35 @@ import { router as usersRouter } from "./routers/users";
 import { Sequelize } from "sequelize-typescript";
 import config from "./config/config.js";
 import dotenv from "dotenv";
-//import { db } from "./models/index.js"
+//import { getCurrentUser } from "./middlewares/get_current_user";
+import jwt from "koa-jwt";
+import { koaJwtSecret } from "jwks-rsa";
 
 dotenv.config();
 
 const app = new Koa();
 app.listen(3000);
 
-//console.log(config[process.env.NODE_ENV]);
-console.log(process.env.NODE_ENV);
-console.log(config);
 const sequelize = new Sequelize(config[process.env.NODE_ENV || "development"]);
 sequelize.addModels([__dirname + "/models/*.ts"]);
-//const sequelize = new Sequelize(config[process.env.NODE_ENV]);
 
 sequelize
   .authenticate()
   .then(() => {
     app.context.db = sequelize;
+    app.use(
+      jwt({
+        secret: koaJwtSecret({
+          jwksUri: process.env.ISSUER_BASE_URL + ".well-known/jwks.json",
+          cache: true,
+          cacheMaxEntries: 5,
+        }),
+        //audience: process.env.AUDIENCE,
+        issuer: process.env.ISSUER_BASE_URL,
+        algorithms: ["RS256"],
+        passthrough: true,
+      }),
+    );
     app.use(bodyParser());
 
     app.use(router.routes());
