@@ -8,19 +8,18 @@ router.get("/", async (ctx, next) => {
   await next();
 });
 
-router.get("/:id", async (ctx, next) => {
-  const user = await User.findByPk(ctx.params.id);
+router.get("/me", async (ctx, next) => {
+  const user = ctx.state.currentUser;
   if (user === null) {
-    ctx.throw(404, "Usuario no encontrado");
+    ctx.throw(401, "Tiene que hacer login primero");
   }
   ctx.response.body = user;
   await next();
 });
-
 router.get("/:id", async (ctx, next) => {
-  const user = ctx.state.currentUser;
+  const user = await User.findByPk(ctx.params.id);
   if (user === null) {
-    ctx.throw(401, "Tiene que hacer login primero");
+    ctx.throw(404, "Usuario no encontrado");
   }
   ctx.response.body = user;
   await next();
