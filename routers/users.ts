@@ -17,6 +17,15 @@ router.get("/:id", async (ctx, next) => {
   await next();
 });
 
+router.get("/:id", async (ctx, next) => {
+  const user = ctx.state.currentUser;
+  if (user === null) {
+    ctx.throw(401, "Tiene que hacer login primero");
+  }
+  ctx.response.body = user;
+  await next();
+});
+
 router.patch("/:id", async (ctx, next) => {
   // TODO: implement
   ctx.body = { hello: ctx.params.id };
