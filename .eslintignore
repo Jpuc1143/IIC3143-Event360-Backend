@@ -1,2 +1,4 @@
 build/
-models/index.js
+config/config.js
+db.sqlite
+migrations/

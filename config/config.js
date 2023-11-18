@@ -1,4 +1,4 @@
-export const config = {
+module.exports = {
   development: {
     dialect: "sqlite",
     storage: "db.sqlite",
