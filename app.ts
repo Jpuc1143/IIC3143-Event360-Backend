@@ -5,7 +5,7 @@ import { router as usersRouter } from "./routers/users";
 import { Sequelize } from "sequelize-typescript";
 import config from "./config/config.js";
 import dotenv from "dotenv";
-//import { getCurrentUser } from "./middlewares/get_current_user";
+import { getCurrentUser } from "./middlewares/get_current_user";
 import jwt from "koa-jwt";
 import { koaJwtSecret } from "jwks-rsa";
 
@@ -21,6 +21,8 @@ sequelize
   .authenticate()
   .then(() => {
     app.context.db = sequelize;
+    app.use(bodyParser());
+
     app.use(
       jwt({
         secret: koaJwtSecret({
@@ -34,7 +36,7 @@ sequelize
         passthrough: true,
       }),
     );
-    app.use(bodyParser());
+    app.use(getCurrentUser);
 
     app.use(router.routes());
     app.use(router.allowedMethods());
