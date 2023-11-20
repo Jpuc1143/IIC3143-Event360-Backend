@@ -17,12 +17,15 @@ router.get("/:id", async (ctx, next) => {
   await next();
 });
 
-router.get("/:id", async (ctx, next) => {
-  const user = ctx.state.currentUser;
-  if (user === null) {
-    ctx.throw(401, "Tiene que hacer login primero");
-  }
-  ctx.response.body = user;
+router.get("/:id/events", async (ctx, next) => {
+  // TODO: implement
+  ctx.response.body = [];
+  await next();
+});
+
+router.get("/:id/events_organized", async (ctx, next) => {
+  // TODO: implement
+  ctx.response.body = [];
   await next();
 });
 

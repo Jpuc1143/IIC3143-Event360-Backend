@@ -30,12 +30,16 @@ sequelize
           cache: true,
           cacheMaxEntries: 5,
         }),
-        //audience: process.env.AUDIENCE,
+        audience: process.env.AUDIENCE,
         issuer: process.env.ISSUER_BASE_URL,
         algorithms: ["RS256"],
         passthrough: true,
       }),
     );
+    app.use(async (ctx, next) => {
+      console.log(ctx.state.jwtOriginalError);
+      await next();
+    });
     app.use(getCurrentUser);
 
     app.use(router.routes());
