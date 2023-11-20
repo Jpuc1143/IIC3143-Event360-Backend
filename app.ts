@@ -12,7 +12,7 @@ import { koaJwtSecret } from "jwks-rsa";
 dotenv.config();
 
 const app = new Koa();
-app.listen(3000);
+const server = app.listen(3000);
 
 const sequelize = new Sequelize(config[process.env.NODE_ENV || "development"]);
 sequelize.addModels([__dirname + "/models/*.ts"]);
@@ -51,3 +51,5 @@ sequelize
   .catch((error) =>
     console.error("No se pudo conectar a la base de datos:", error),
   );
+
+export { app, server };
