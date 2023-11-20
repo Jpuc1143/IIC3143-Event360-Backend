@@ -8,6 +8,7 @@ import dotenv from "dotenv";
 import { getCurrentUser } from "./middlewares/get_current_user";
 import jwt from "koa-jwt";
 import { koaJwtSecret } from "jwks-rsa";
+import cors from "@koa/cors";
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ sequelize.addModels([__dirname + "/models/*.ts"]);
 sequelize
   .authenticate()
   .then(() => {
+    app.use(cors({ origin: "*" }));
     app.context.db = sequelize;
     app.use(bodyParser());
 
