@@ -1,11 +1,7 @@
 import request from "supertest";
-import { app, server } from "../app";
+import { app } from "../server";
 
 const api = request(app.callback());
-
-afterAll(() => {
-  server.close();
-});
 
 describe("Test the root path", () => {
   test("Hello world works", async () => {

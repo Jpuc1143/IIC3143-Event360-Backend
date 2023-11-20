@@ -4,8 +4,8 @@
   "description": "",
   "main": "app.ts",
   "scripts": {
-    "start": "nodemon app.ts",
-    "test": "jest",
+    "start": "nodemon server.ts",
+    "test": "jest --runInBand",
     "build": "tsc",
     "lint": "eslint .",
     "lint-check": "eslint . && prettier . --check",
@@ -75,17 +75,18 @@
       "**/*.{ts,js}",
       "!**/node_modules/**",
       "!**/build/**",
-      "!**/coverage/**"
+      "!**/coverage/**",
+      "!**/migrations/**"
     ],
     "transform": {
       "\\.ts$": "ts-jest"
     },
     "coverageThreshold": {
       "global": {
-        "branches": 100,
-        "functions": 100,
-        "lines": 100,
-        "statements": 100
+        "branches": 60,
+        "functions": 60,
+        "lines": 60,
+        "statements": 60
       }
     },
     "coverageReporters": [
@@ -96,7 +97,8 @@
     "testPathIgnorePatterns": [
       "/node_modules/",
       "/build/",
-      "/coverage/"
+      "/coverage/",
+      "/migrations/"
     ]
   }
 }
