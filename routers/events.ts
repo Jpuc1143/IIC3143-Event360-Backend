@@ -32,8 +32,8 @@ router.post("/", async (ctx, next) => {
     });
     ctx.status = 201;
     ctx.body = {
-      name : newEvent.name,
-      description : newEvent.description,
+      name: newEvent.name,
+      description: newEvent.description,
       merchantCode: newEvent.merchantCode,
     };
     await next();
