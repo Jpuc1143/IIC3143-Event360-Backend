@@ -1,19 +1,29 @@
 import { app } from "./app";
-import { Sequelize } from "sequelize-typescript";
-import config from "./config/config.js";
+import { configureDatabase, closeDatabase } from "./database";
 
 const PORT = process.env.PORT || 3000;
 
-const sequelize = new Sequelize(config[process.env.NODE_ENV || "development"]);
-sequelize.addModels([__dirname + "/models/*.ts"]);
+const startServer = async () => {
+  try {
+    const db = await configureDatabase();
 
-sequelize
-  .authenticate()
-  .then(() => {
-    app.context.db = sequelize;
-    app.listen(PORT);
-    return app;
-  })
-  .catch((err) => console.error("Unable to connect to the database:", err));
+    app.context.db = db;
 
-export { app };
+    const server = app.listen(PORT, () => {
+      console.log(`Servidor Koa iniciado en http://localhost:${PORT}`);
+    });
+
+    // Maneja el cierre adecuado del servidor y la base de datos
+    process.on("SIGINT", async () => {
+      await closeDatabase();
+      server.close(() => {
+        console.log("Servidor cerrado.");
+        process.exit(0);
+      });
+    });
+  } catch (error) {
+    console.error("Error al iniciar el servidor:", error);
+  }
+};
+
+startServer();

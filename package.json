@@ -76,7 +76,9 @@
       "!**/node_modules/**",
       "!**/build/**",
       "!**/coverage/**",
-      "!**/migrations/**"
+      "!**/migrations/**",
+      "!**/server.ts/**",
+      "!**/database.ts/**"
     ],
     "transform": {
       "\\.ts$": "ts-jest"
@@ -98,7 +100,9 @@
       "/node_modules/",
       "/build/",
       "/coverage/",
-      "/migrations/"
+      "/migrations/",
+      "/server.ts/",
+      "/database.ts/"
     ]
   }
 }
