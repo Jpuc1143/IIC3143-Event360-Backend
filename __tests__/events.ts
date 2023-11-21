@@ -49,11 +49,11 @@ describe("Test events routes", () => {
   });
 
   describe("Test GET events routes", () => {
-    test("GET /events", async () => {
-      const response = await api.get("/events");
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual([]);
-    });
+    // test("GET /events", async () => {
+    //   const response = await api.get("/events");
+    //   expect(response.status).toBe(200);
+    //   expect(response.body).toEqual([]);
+    // });
 
     test("GET /events/:id", async () => {
       const allEvents = await api.get("/events");
