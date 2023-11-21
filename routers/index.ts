@@ -7,7 +7,7 @@ router.get("/", async (ctx, next) => {
   await next();
 });
 
-router.all(/^\/users\/me(\/.*)$/, async (ctx) => {
+router.all(/^\/users\/me(\/.*)?$/, async (ctx) => {
   if (ctx.state.currentUser === null) {
     ctx.throw(401, "Tiene que hacer login primero");
   }
