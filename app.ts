@@ -2,6 +2,7 @@ import Koa from "koa";
 import bodyParser from "@koa/bodyparser";
 import { router } from "./routers";
 import { router as usersRouter } from "./routers/users";
+import { router as eventsRouter } from "./routers/events";
 import dotenv from "dotenv";
 import { getCurrentUser } from "./middlewares/get_current_user";
 import jwt from "koa-jwt";
@@ -42,5 +43,8 @@ app.use(router.allowedMethods());
 
 app.use(usersRouter.routes());
 app.use(usersRouter.allowedMethods());
+
+app.use(eventsRouter.routes());
+app.use(eventsRouter.allowedMethods());
 
 export { app };

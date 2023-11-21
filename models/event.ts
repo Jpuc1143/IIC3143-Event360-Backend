@@ -3,8 +3,8 @@ import { Table, Column, Model, Default, DataType } from "sequelize-typescript";
 
 @Table
 export default class Event extends Model {
-  @Column({ primaryKey: true })
   @Default(DataType.UUIDV4)
+  @Column({ primaryKey: true })
   id: UUID;
 
   @Column({
