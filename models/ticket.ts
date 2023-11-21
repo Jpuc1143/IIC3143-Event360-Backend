@@ -5,6 +5,7 @@ import {
   Model,
   BelongsTo,
   ForeignKey,
+  Default,
   DataType,
 } from "sequelize-typescript";
 import TicketType from "./ticketType";
@@ -12,12 +13,9 @@ import User from "./user";
 
 @Table
 export default class Ticket extends Model {
-  @Column({
-    type: DataType.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  })
-  id!: number;
+  @Default(DataType.UUIDV4)
+  @Column({ primaryKey: true })
+  id!: UUID;
 
   @Column({
     type: DataType.STRING,
@@ -35,7 +33,7 @@ export default class Ticket extends Model {
 
   @ForeignKey(() => TicketType)
   @Column
-  ticketTypeId!: number;
+  ticketTypeId!: UUID;
 
   @BelongsTo(() => TicketType)
   ticketType!: TicketType;

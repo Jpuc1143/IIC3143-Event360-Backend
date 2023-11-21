@@ -3,11 +3,18 @@ import { app } from "../app";
 import { configureDatabase, closeDatabase } from "../database";
 
 const api = request(app.callback());
+let testEvent, testTicketType;
 
 beforeAll(async () => {
   app.context.db = await configureDatabase();
-  await app.context.db.models.TicketType.create({
-    // eventId: 1,
+  testEvent = await app.context.db.models.Event.create({
+    name: "Ombligo G19",
+    description: "Descripción de prueba",
+    startDate: new Date(),
+    merchantCode: "12312321sdfs",
+  });
+  testTicketType = await app.context.db.models.TicketType.create({
+    eventId: testEvent.id,
     price: 9990,
     amount: 100,
     domainWhitelist: "uc.cl",
@@ -22,13 +29,13 @@ afterAll(async () => {
 describe("Test ticketTypes routes", () => {
   describe("Test GET routes", () => {
     test("GET /tickettypes/:id", async () => {
-      const response = await api.get("/tickettypes/1");
+      const response = await api.get(`/tickettypes/${testTicketType.id}`);
       expect(response.status).toBe(200);
       delete response.body.createdAt;
       delete response.body.updatedAt;
       expect(response.body).toEqual({
-        id: 1,
-        // eventId: 1,
+        id: testTicketType.id,
+        eventId: testEvent.id,
         price: 9990,
         amount: 100,
         domainWhitelist: "uc.cl",
@@ -40,7 +47,7 @@ describe("Test ticketTypes routes", () => {
   describe("Test POST routes", () => {
     test("POST /tickettypes", async () => {
       const prevCount = await app.context.db.models.TicketType.count();
-      const requestBody = { eventId: 1, price: 24990, amount: 150 };
+      const requestBody = { eventId: testEvent.id, price: 24990, amount: 150 };
       const response = await api.post("/tickettypes").send(requestBody);
       expect(response.status).toBe(201);
       expect(await app.context.db.models.TicketType.count()).toEqual(
@@ -52,7 +59,9 @@ describe("Test ticketTypes routes", () => {
   describe("Test PATCH routes", () => {
     test("PATCH /tickettypes/:id", async () => {
       const requestBody = { price: 4990 };
-      const response = await api.patch("/tickettypes/1").send(requestBody);
+      const response = await api
+        .patch(`/tickettypes/${testTicketType.id}`)
+        .send(requestBody);
       expect(response.status).toBe(200);
       expect(response.body.price).toEqual(4990);
     });
@@ -60,7 +69,7 @@ describe("Test ticketTypes routes", () => {
 
   describe("Test DELETE routes", () => {
     test("DELETE /tickettypes/:id", async () => {
-      const response = await api.delete("/tickettypes/1");
+      const response = await api.delete(`/tickettypes/${testTicketType.id}`);
       expect(response.status).toBe(204);
     });
   });
@@ -73,18 +82,20 @@ describe("Test ticketTypes routes", () => {
       });
     });
     test("GET /tickettypes/:id", async () => {
-      const response = await api.get("/tickettypes/1");
+      const response = await api.get(`/tickettypes/${testTicketType.id}`);
       expect(response.status).toBe(404);
       expect(response.text).toEqual("Tipo de ticket no encontrado");
     });
     test("PATCH /tickettypes/:id", async () => {
       const requestBody = { price: 4990 };
-      const response = await api.patch("/tickettypes/1").send(requestBody);
+      const response = await api
+        .patch(`/tickettypes/${testTicketType.id}`)
+        .send(requestBody);
       expect(response.status).toBe(404);
       expect(response.text).toEqual("Tipo de ticket no encontrado");
     });
     test("DELETE /tickettypes/:id", async () => {
-      const response = await api.delete("/tickettypes/1");
+      const response = await api.delete(`/tickettypes/${testTicketType.id}`);
       expect(response.status).toBe(404);
       expect(response.text).toEqual("Tipo de ticket no encontrado");
     });
