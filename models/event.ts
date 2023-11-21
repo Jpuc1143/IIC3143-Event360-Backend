@@ -31,5 +31,4 @@ export default class Event extends Model {
     unique: true,
   })
   merchantCode!: string;
-
 }
