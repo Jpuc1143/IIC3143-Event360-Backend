@@ -2,4 +2,3 @@ build/
 config/config.js
 db.sqlite
 migrations/
-pnpm-lock.yaml
