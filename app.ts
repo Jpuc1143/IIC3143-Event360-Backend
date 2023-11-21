@@ -1,12 +1,14 @@
 import Koa from "koa";
 import bodyParser from "@koa/bodyparser";
-import { router } from "./routers";
-import { router as usersRouter } from "./routers/users";
 import dotenv from "dotenv";
 import { getCurrentUser } from "./middlewares/get_current_user";
 import jwt from "koa-jwt";
 import { koaJwtSecret } from "jwks-rsa";
 import cors from "@koa/cors";
+import { router } from "./routers";
+import { router as usersRouter } from "./routers/users";
+import { router as ticketsRouter } from "./routers/tickets";
+import { router as ticketTypesRouter } from "./routers/ticketTypes";
 
 dotenv.config();
 
@@ -42,5 +44,11 @@ app.use(router.allowedMethods());
 
 app.use(usersRouter.routes());
 app.use(usersRouter.allowedMethods());
+
+app.use(ticketsRouter.routes());
+app.use(ticketsRouter.allowedMethods());
+
+app.use(ticketTypesRouter.routes());
+app.use(ticketTypesRouter.allowedMethods());
 
 export { app };
