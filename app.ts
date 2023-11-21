@@ -12,7 +12,7 @@ import { koaJwtSecret } from "jwks-rsa";
 dotenv.config();
 
 const app = new Koa();
-app.listen(3000);
+app.listen(8080);
 
 const sequelize = new Sequelize(config[process.env.NODE_ENV || "development"]);
 sequelize.addModels([__dirname + "/models/*.ts"]);
