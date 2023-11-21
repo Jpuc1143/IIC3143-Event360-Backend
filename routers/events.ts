@@ -31,7 +31,11 @@ router.post("/", async (ctx, next) => {
       merchantCode,
     });
     ctx.status = 201;
-    ctx.body = newEvent;
+    ctx.body = {
+      name : newEvent.name,
+      description : newEvent.description,
+      merchantCode: newEvent.merchantCode,
+    };
     await next();
   } catch (error) {
     ctx.status = 500;
@@ -60,7 +64,8 @@ router.delete("/:id", async (ctx, next) => {
   if (event === null) {
     ctx.throw(404, "Evento no encontrado");
   }
-  await event.destroy();
+  const deletedEvent = await event.destroy();
+  ctx.body = deletedEvent;
   ctx.status = 204;
   await next();
 });
