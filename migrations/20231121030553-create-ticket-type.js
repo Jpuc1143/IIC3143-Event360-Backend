@@ -8,6 +8,14 @@ module.exports = {
         allowNull: false,
         type: Sequelize.UUID,
       },
+      eventId: {
+        type: Sequelize.UUID,
+        onDelete: "CASCADE",
+        references: {
+          model: "events",
+          key: "id",
+        },
+      },
       price: {
         type: Sequelize.INTEGER,
         allowNull: false,

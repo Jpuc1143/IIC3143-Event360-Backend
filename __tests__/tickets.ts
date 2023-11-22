@@ -1,17 +1,16 @@
 import request from "supertest";
 import { app } from "../app";
 import { configureDatabase, closeDatabase } from "../database";
-// import { getCurrentUser } from "../middlewares/get_current_user";
 
 const api = request(app.callback());
 let testUser, testEvent, testTicketType, testTicket;
+// let accessToken;
 
 beforeAll(async () => {
   app.context.db = await configureDatabase();
   testUser = await app.context.db.models.User.create({
     auth: "example-auth-data",
   });
-  // app.context.state.user = testUser;
   testEvent = await app.context.db.models.Event.create({
     name: "Ombligo G19",
     description: "Descripción de prueba",
@@ -52,6 +51,12 @@ describe("Test tickets routes", () => {
   });
 
   describe("Test POST routes", () => {
+    // test("POST /tickets", async () => {
+    //   const requestBody = { ticketTypeId: testTicketType.id };
+    //   const response = await api.post("/tickets")
+    //     .set('Authorization', `Bearer ${accessToken}`)
+    //     .send(requestBody);
+    // });
     describe("Not logged in", () => {
       test("POST /tickets", async () => {
         const requestBody = { ticketTypeId: testTicketType.id };

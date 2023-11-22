@@ -8,6 +8,22 @@ module.exports = {
         allowNull: false,
         type: Sequelize.UUID,
       },
+      userId: {
+        type: Sequelize.UUID,
+        onDelete: "CASCADE",
+        references: {
+          model: "users",
+          key: "id",
+        },
+      },
+      ticketTypeId: {
+        type: Sequelize.UUID,
+        onDelete: "CASCADE",
+        references: {
+          model: "ticketTypes",
+          key: "id",
+        },
+      },
       status: {
         type: Sequelize.STRING,
         allowNull: false,
