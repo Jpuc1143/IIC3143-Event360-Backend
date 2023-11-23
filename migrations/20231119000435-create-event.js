@@ -8,7 +8,19 @@ module.exports = {
         allowNull: false,
         type: Sequelize.UUID,
       },
+      userId: {
+        type: Sequelize.UUID,
+        onDelete: "CASCADE",
+        references: {
+          model: "users",
+          key: "id",
+        },
+      },
       name: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      organization: {
         type: Sequelize.STRING,
         allowNull: false,
       },
@@ -16,14 +28,29 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      event_type: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       startDate: {
         type: Sequelize.DATE,
+        allowNull: false,
+      },
+      endDate: {
+        type: Sequelize.DATE,
+        allowNull: false,
+      },
+      location: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      image: {
+        type: Sequelize.STRING,
         allowNull: false,
       },
       merchantCode: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true,
       },
       createdAt: {
         allowNull: false,

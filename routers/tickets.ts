@@ -2,8 +2,11 @@ import Router from "@koa/router";
 import Ticket from "../models/ticket";
 import TicketType from "../models/ticketType";
 import { Op } from "sequelize";
+import { verifyLogin } from "../middlewares/verifyLogin";
 
 export const router = new Router({ prefix: "/tickets" });
+
+router.use(verifyLogin);
 
 router.get("/:id", async (ctx, next) => {
   const ticket = await Ticket.findByPk(ctx.params.id);
@@ -24,7 +27,7 @@ router.post("/", async (ctx, next) => {
     const ticketsBought = await Ticket.findAndCountAll({
       where: {
         ticketTypeId,
-        status: { [Op.or]: { [Op.eq]: "approved", [Op.eq]: "pending" } },
+        status: { [Op.or]: ["approved", "pending"] },
       },
     });
     if (ticketType.amount - ticketsBought.count === 0) {
@@ -40,7 +43,6 @@ router.post("/", async (ctx, next) => {
     ctx.body = newTicket;
     await next();
   } catch (error) {
-    console.log(error);
     ctx.status = error.status || 500;
     ctx.body = error.message || { error: "Internal Server Error" };
   }
