@@ -1,5 +1,6 @@
 import Router from "@koa/router";
 import Event from "../models/event";
+import TicketType from "../models/ticketType";
 import { verifyLogin } from "../middlewares/verifyLogin";
 
 export const router = new Router({ prefix: "/events" });
@@ -19,6 +20,21 @@ router.get("/:id", async (ctx, next) => {
     ctx.throw(404, "Evento no encontrado");
   }
   ctx.response.body = event;
+  await next();
+});
+
+router.get("/:id/eventtickets", async (ctx, next) => {
+  const event = await Event.findByPk(ctx.params.id);
+  if (event === null) {
+    ctx.throw(404, "Evento no encontrado");
+  }
+  const ticketTypes = await TicketType.findAll({
+    where: { eventId: ctx.params.id },
+  });
+  if (ticketTypes.length === 0) {
+    ctx.throw(404, "Tipos de ticket para este evento no encontrados");
+  }
+  ctx.response.body = ticketTypes;
   await next();
 });
 
