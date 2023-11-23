@@ -23,6 +23,14 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
+
+      - name: Create .env file
+        uses: SpicyPizza/create-envfile@v2.0.2
+        with:
+          envkey_NODE_ENV: ${{ vars.NODE_ENV }}
+          envkey_ISSUER_BASE_URL: ${{ vars.ISSUER_BASE_URL }}
+          envkey_AUDIENCE: ${{ vars.AUDIENCE }}
+
       - run: npm ci
       - run: npm run lint-check
       - run: npm run build --if-present
