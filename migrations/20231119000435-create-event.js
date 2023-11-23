@@ -20,12 +20,32 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      organization: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       description: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      event_type: {
         type: Sequelize.STRING,
         allowNull: false,
       },
       startDate: {
         type: Sequelize.DATE,
+        allowNull: false,
+      },
+      endDate: {
+        type: Sequelize.DATE,
+        allowNull: false,
+      },
+      location: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      image: {
+        type: Sequelize.STRING,
         allowNull: false,
       },
       merchantCode: {

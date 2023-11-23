@@ -28,6 +28,12 @@ export default class Event extends Model {
     type: DataType.STRING,
     allowNull: false,
   })
+  organization!: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
   description!: string;
 
   @Column({
@@ -35,6 +41,26 @@ export default class Event extends Model {
     allowNull: false,
   })
   startDate!: Date;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+  })
+  endDate!: Date;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    unique: true,
+  })
+  location!: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    unique: true,
+  })
+  image!: string;
 
   @Column({
     type: DataType.STRING,
