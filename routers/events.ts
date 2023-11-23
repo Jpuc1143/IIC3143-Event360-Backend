@@ -1,7 +1,10 @@
 import Router from "@koa/router";
 import Event from "../models/event";
+import { verifyLogin } from "../middlewares/verifyLogin";
 
 export const router = new Router({ prefix: "/events" });
+
+router.use(verifyLogin);
 
 router.get("/", async (ctx, next) => {
   const event = await Event.findAll();
@@ -23,17 +26,35 @@ router.get("/:id", async (ctx, next) => {
 
 router.post("/", async (ctx, next) => {
   try {
-    const { name, description, startDate, merchantCode } = ctx.request.body;
-    const newEvent = await Event.create({
+    const {
       name,
+      organization,
       description,
       startDate,
+      endDate,
+      location,
+      image,
       merchantCode,
+    } = ctx.request.body;
+    const userId = ctx.state.currentUser.id;
+    const newEvent = await Event.create({
+      name,
+      organization,
+      description,
+      startDate,
+      endDate,
+      location,
+      image,
+      merchantCode,
+      userId,
     });
     ctx.status = 201;
     ctx.body = {
       name: newEvent.name,
+      organization: newEvent.organization,
       description: newEvent.description,
+      location: newEvent.location,
+      image: newEvent.image,
       merchantCode: newEvent.merchantCode,
     };
     await next();

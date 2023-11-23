@@ -18,15 +18,22 @@ describe("Test events routes", () => {
       const now = new Date();
       const requestBody = {
         name: "Hi",
+        organization: "blw",
         description: "Descripción de prueba",
+        location: "bla",
+        image: "bla",
         startDate: now,
         merchantCode: "12312321sdfs",
+        userId: "",
       };
       const response = await api.post("/events").send(requestBody);
       expect(response.status).toBe(201);
       expect(response.body).toEqual({
         name: "Hi",
+        organization: "blw",
         description: "Descripción de prueba",
+        location: "bla",
+        image: "bla",
         merchantCode: "12312321sdfs",
       });
     });
