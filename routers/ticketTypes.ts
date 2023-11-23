@@ -6,19 +6,6 @@ import { Op } from "sequelize";
 
 export const router = new Router({ prefix: "/tickettypes" });
 
-// router.get("/event/:eventId", async (ctx, next) => {
-//   const event = await Event.findByPk(ctx.params.eventId);
-//   if (event === null) {
-//     ctx.throw(404, "Evento no encontrado");
-//   }
-//   const ticketTypes = await event.getTicketTypes();
-//   if (ticketTypes === null) {
-//     ctx.throw(404, "Tipos de ticket para este evento no encontrados");
-//   }
-//   ctx.response.body = event;
-//   await next();
-// });
-
 router.get("/:id", async (ctx, next) => {
   const ticketType = await TicketType.findByPk(ctx.params.id);
   if (ticketType === null) {
