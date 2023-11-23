@@ -3,6 +3,7 @@ import { app } from "../app";
 import { configureDatabase, closeDatabase } from "../database";
 
 const api = request(app.callback());
+// const accessToken = process.env.TESTING_TOKEN;
 
 beforeAll(async () => {
   app.context.db = await configureDatabase();
@@ -19,7 +20,14 @@ describe("Test the root path", () => {
     expect(response.body).toEqual({ hello: "world!" });
   });
 
-  test("GET /users/me", async () => {
+  // test("GET /users/me", async () => {
+  //   const response = await api.get("/users/me")
+  //     .set('Authorization', `Bearer ${accessToken}`);
+  //   expect(response.status).toBe(401);
+  //   expect(response.text).toEqual("Tiene que hacer login primero");
+  // });
+
+  test("GET /users/me not logged in", async () => {
     const response = await api.get("/users/me");
     expect(response.status).toBe(401);
     expect(response.text).toEqual("Tiene que hacer login primero");

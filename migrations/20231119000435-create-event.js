@@ -8,6 +8,14 @@ module.exports = {
         allowNull: false,
         type: Sequelize.UUID,
       },
+      userId: {
+        type: Sequelize.UUID,
+        onDelete: "CASCADE",
+        references: {
+          model: "users",
+          key: "id",
+        },
+      },
       name: {
         type: Sequelize.STRING,
         allowNull: false,

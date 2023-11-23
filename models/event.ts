@@ -4,10 +4,13 @@ import {
   Column,
   Model,
   HasMany,
+  BelongsTo,
+  ForeignKey,
   Default,
   DataType,
 } from "sequelize-typescript";
 import TicketType from "./ticketType";
+import User from "./user";
 
 @Table
 export default class Event extends Model {
@@ -39,6 +42,15 @@ export default class Event extends Model {
     unique: true,
   })
   merchantCode!: string;
+
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+  })
+  userId!: UUID;
+
+  @BelongsTo(() => User)
+  user!: User;
 
   @HasMany(() => TicketType)
   ticketTypes!: TicketType[];

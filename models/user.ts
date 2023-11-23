@@ -8,6 +8,7 @@ import {
   DataType,
 } from "sequelize-typescript";
 import Ticket from "./ticket";
+import Event from "./event";
 
 @Table
 export default class User extends Model {
@@ -17,6 +18,9 @@ export default class User extends Model {
 
   @Column
   auth: string;
+
+  @HasMany(() => Event)
+  events!: Event[];
 
   @HasMany(() => Ticket)
   tickets!: Ticket[];
