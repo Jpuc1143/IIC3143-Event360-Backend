@@ -51,21 +51,18 @@ export default class Event extends Model {
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    unique: true,
   })
   location!: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    unique: true,
   })
   image!: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    unique: true,
   })
   merchantCode!: string;
 

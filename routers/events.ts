@@ -4,14 +4,12 @@ import { verifyLogin } from "../middlewares/verifyLogin";
 
 export const router = new Router({ prefix: "/events" });
 
-router.use(verifyLogin);
-
 router.get("/", async (ctx, next) => {
-  const event = await Event.findAll();
-  if (event === null) {
+  const events = await Event.findAll();
+  if (events.length === 0) {
     ctx.throw(404, "Eventos no encontrados");
   }
-  ctx.response.body = event;
+  ctx.response.body = events;
   await next();
 });
 
@@ -24,7 +22,7 @@ router.get("/:id", async (ctx, next) => {
   await next();
 });
 
-router.post("/", async (ctx, next) => {
+router.post("/", verifyLogin, async (ctx, next) => {
   try {
     const {
       name,
@@ -64,7 +62,7 @@ router.post("/", async (ctx, next) => {
   }
 });
 
-router.patch("/:id", async (ctx, next) => {
+router.patch("/:id", verifyLogin, async (ctx, next) => {
   const eventId = ctx.params.id;
   const eventDataToUpdate = ctx.request.body;
 
@@ -78,7 +76,7 @@ router.patch("/:id", async (ctx, next) => {
   await next();
 });
 
-router.delete("/:id", async (ctx, next) => {
+router.delete("/:id", verifyLogin, async (ctx, next) => {
   const eventId = ctx.params.id;
   const event = await Event.findByPk(eventId);
 

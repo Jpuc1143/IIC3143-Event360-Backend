@@ -1,9 +1,9 @@
 import request from "supertest";
 import { app } from "../app";
 import { configureDatabase, closeDatabase } from "../database";
+// import { accessToken } from "../fixtures/testingToken"
 
 const api = request(app.callback());
-// const accessToken = process.env.TESTING_TOKEN;
 
 beforeAll(async () => {
   app.context.db = await configureDatabase();
