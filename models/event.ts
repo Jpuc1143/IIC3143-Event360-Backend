@@ -1,5 +1,13 @@
 import { UUID } from "crypto";
-import { Table, Column, Model, Default, DataType } from "sequelize-typescript";
+import {
+  Table,
+  Column,
+  Model,
+  HasMany,
+  Default,
+  DataType,
+} from "sequelize-typescript";
+import TicketType from "./ticketType";
 
 @Table
 export default class Event extends Model {
@@ -31,4 +39,7 @@ export default class Event extends Model {
     unique: true,
   })
   merchantCode!: string;
+
+  @HasMany(() => TicketType)
+  ticketTypes!: TicketType[];
 }
