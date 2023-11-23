@@ -15,6 +15,7 @@ beforeAll(async () => {
     name: "Ombligo G19",
     organization: "UC G19",
     description: "Descripción de prueba",
+    eventType: "Presencial",
     location: "Belly Beach",
     image: "loremipsum.com",
     startDate: new Date(),
