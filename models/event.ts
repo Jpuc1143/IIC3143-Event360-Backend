@@ -37,6 +37,12 @@ export default class Event extends Model {
   description!: string;
 
   @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  eventType!: string;
+
+  @Column({
     type: DataType.DATE,
     allowNull: false,
   })

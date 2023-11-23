@@ -1,5 +1,8 @@
 import Router from "@koa/router";
 import User from "../models/user";
+import Event from "../models/event";
+import Ticket from "../models/ticket";
+import { Op } from "sequelize";
 
 export const router = new Router({ prefix: "/users" });
 
@@ -19,13 +22,16 @@ router.get("/:id", async (ctx, next) => {
 
 router.get("/:id/events", async (ctx, next) => {
   // TODO: implement
-  ctx.response.body = [];
+  const myTickets = await Ticket.findAll({ where: { userId: ctx.params.id } });
+  const temp = myTickets.map((ticket) => ticket.ticketTypeId);
+  const events = await Event.findAll({ where: { id: { [Op.in]: temp } } });
+  ctx.response.body = events;
   await next();
 });
 
 router.get("/:id/events_organized", async (ctx, next) => {
-  // TODO: implement
-  ctx.response.body = [];
+  const myEvents = await Event.findAll({ where: { userId: ctx.params.id } });
+  ctx.response.body = myEvents;
   await next();
 });
 
