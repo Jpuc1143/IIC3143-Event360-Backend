@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "outDir": "./build",
+    "target": "es6", // or a more recent ecmascript version
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "moduleResolution": "node"
+  },
+  "exclude": ["node_modules"]
+}
