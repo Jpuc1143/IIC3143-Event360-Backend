@@ -11,6 +11,7 @@ import {
 } from "sequelize-typescript";
 import Ticket from "./ticket";
 import Event from "./event";
+import { Op } from "sequelize";
 
 @Table
 export default class TicketType extends Model {
@@ -42,4 +43,14 @@ export default class TicketType extends Model {
 
   @HasMany(() => Ticket)
   tickets!: Ticket[];
+
+  async getTicketsLeft(): Promise<number> {
+    const ticketsBought = await Ticket.findAndCountAll({
+      where: {
+        ticketTypeId: this.id,
+        status: { [Op.or]: ["approved", "pending"] },
+      },
+    });
+    return this.amount - ticketsBought.count;
+  }
 }
