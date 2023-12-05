@@ -49,11 +49,15 @@ export default class User extends Model {
   }
 
   async refreshAuth0Data() {
-    const data = (await auth0Management.users.get({ id: this.auth })).data;
-    this.setDataValue("email", data.email);
-    this.setDataValue("name", data.name);
-    this.setDataValue("picture", data.picture);
-    this.save();
+    try {
+      const data = (await auth0Management.users.get({ id: this.auth })).data;
+      this.setDataValue("email", data.email);
+      this.setDataValue("name", data.name);
+      this.setDataValue("picture", data.picture);
+      this.save();
+    } catch (error) {
+      return;
+    }
   }
 
   async isVerified() {
