@@ -1,7 +1,6 @@
 import Router from "@koa/router";
 import Ticket from "../models/ticket";
 import TicketType from "../models/ticketType";
-import { Op } from "sequelize";
 import { verifyLogin } from "../middlewares/verifyLogin";
 
 export const router = new Router({ prefix: "/tickets" });
@@ -24,13 +23,7 @@ router.post("/", async (ctx, next) => {
     if (ticketType === null) {
       ctx.throw(404, "Tipo de ticket no encontrado");
     }
-    const ticketsBought = await Ticket.findAndCountAll({
-      where: {
-        ticketTypeId,
-        status: { [Op.or]: ["approved", "pending"] },
-      },
-    });
-    if (ticketType.amount - ticketsBought.count === 0) {
+    if ((await ticketType.getTicketsLeft()) === 0) {
       ctx.throw(400, "No quedan tickets disponibles");
     }
     const userId = ctx.state.currentUser.id;

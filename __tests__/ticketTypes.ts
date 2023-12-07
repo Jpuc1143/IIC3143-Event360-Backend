@@ -63,6 +63,25 @@ describe("Test ticketTypes routes", () => {
         prevCount + 1,
       );
     });
+    describe("Catching error", () => {
+      test("POST /tickettypes", async () => {
+        jest
+          .spyOn(app.context.db.models.TicketType, "create")
+          .mockRejectedValueOnce(new Error());
+        const prevCount = await app.context.db.models.TicketType.count();
+        const requestBody = {
+          eventId: testEvent.id,
+          price: 24990,
+          amount: 150,
+        };
+        const response = await api.post("/tickettypes").send(requestBody);
+        expect(response.status).toBe(500);
+        expect(response.body).toEqual({ error: "Internal Server Error" });
+        expect(await app.context.db.models.TicketType.count()).toEqual(
+          prevCount,
+        );
+      });
+    });
   });
 
   describe("Test PATCH routes", () => {
@@ -78,8 +97,12 @@ describe("Test ticketTypes routes", () => {
 
   describe("Test DELETE routes", () => {
     test("DELETE /tickettypes/:id", async () => {
+      const prevCount = await app.context.db.models.TicketType.count();
       const response = await api.delete(`/tickettypes/${testTicketType.id}`);
       expect(response.status).toBe(204);
+      expect(await app.context.db.models.TicketType.count()).toEqual(
+        prevCount - 1,
+      );
     });
   });
 

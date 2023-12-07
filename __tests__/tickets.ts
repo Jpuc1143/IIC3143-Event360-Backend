@@ -55,7 +55,24 @@ describe("Test tickets routes", () => {
   });
 
   describe("Test POST routes", () => {
+    describe("Catching error", () => {
+      test("POST /tickets", async () => {
+        jest
+          .spyOn(app.context.db.models.Ticket, "create")
+          .mockRejectedValueOnce(new Error());
+        const prevCount = await app.context.db.models.Ticket.count();
+        const requestBody = { ticketTypeId: testTicketType.id };
+        const response = await api
+          .post("/tickets")
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send(requestBody);
+        expect(response.status).toBe(500);
+        expect(response.body).toEqual({ error: "Internal Server Error" });
+        expect(await app.context.db.models.Ticket.count()).toEqual(prevCount);
+      });
+    });
     test("POST /tickets", async () => {
+      const prevCount = await app.context.db.models.Ticket.count();
       const requestBody = { ticketTypeId: testTicketType.id };
       const response = await api
         .post("/tickets")
@@ -64,19 +81,23 @@ describe("Test tickets routes", () => {
       expect(response.status).toBe(201);
       expect(response.body.ticketTypeId).toEqual(testTicketType.id);
       expect(response.body.status).toEqual("pending");
+      expect(await app.context.db.models.Ticket.count()).toEqual(prevCount + 1);
     });
     describe("Not logged in", () => {
       test("POST /tickets", async () => {
+        const prevCount = await app.context.db.models.Ticket.count();
         const requestBody = { ticketTypeId: testTicketType.id };
         const response = await api.post("/tickets").send(requestBody);
         expect(response.status).toBe(401);
         expect(response.text).toEqual("No autorizado");
+        expect(await app.context.db.models.Ticket.count()).toEqual(prevCount);
       });
     });
     describe("Not enough tickets", () => {
       // Como se creó un ticket al principio y uno en el test anterior
       // no quedan tickets disponibles
       test("POST /tickets", async () => {
+        const prevCount = await app.context.db.models.Ticket.count();
         const requestBody = { ticketTypeId: testTicketType.id };
         const response = await api
           .post("/tickets")
@@ -84,6 +105,7 @@ describe("Test tickets routes", () => {
           .send(requestBody);
         expect(response.status).toBe(400);
         expect(response.text).toEqual("No quedan tickets disponibles");
+        expect(await app.context.db.models.Ticket.count()).toEqual(prevCount);
       });
     });
   });
@@ -109,6 +131,7 @@ describe("Test tickets routes", () => {
       });
     });
     test("POST /tickets", async () => {
+      const prevCount = await app.context.db.models.Ticket.count();
       const requestBody = { ticketTypeId: testTicketType.id };
       const response = await api
         .post("/tickets")
@@ -116,6 +139,7 @@ describe("Test tickets routes", () => {
         .send(requestBody);
       expect(response.status).toBe(404);
       expect(response.text).toEqual("Tipo de ticket no encontrado");
+      expect(await app.context.db.models.Ticket.count()).toEqual(prevCount);
     });
   });
 });
