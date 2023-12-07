@@ -4,12 +4,15 @@ import { configureDatabase, closeDatabase } from "../database";
 import { accessToken } from "../fixtures/testingToken";
 
 const api = request(app.callback());
-let testUser, testEvent;
+let testUser, testUser2, testEvent, testTicketType;
 
 beforeAll(async () => {
   app.context.db = await configureDatabase();
   testUser = await app.context.db.models.User.create({
     auth: "example-auth-data",
+  });
+  testUser2 = await app.context.db.models.User.create({
+    auth: "example-auth-data2",
   });
   testEvent = await app.context.db.models.Event.create({
     userId: testUser.id,
@@ -22,6 +25,17 @@ beforeAll(async () => {
     startDate: new Date(),
     endDate: new Date().getDate() + 3,
     merchantCode: "12312321sdfs",
+  });
+  testTicketType = await app.context.db.models.TicketType.create({
+    eventId: testEvent.id,
+    price: 9990,
+    amount: 100,
+    domainWhitelist: "uc.cl",
+  });
+  await app.context.db.models.Ticket.create({
+    userId: testUser2.id,
+    ticketTypeId: testTicketType.id,
+    status: "approved",
   });
 });
 
@@ -48,7 +62,61 @@ describe("Test events routes", () => {
       expect(response.status).toBe(404);
       expect(response.text).toEqual("Evento no encontrado");
     });
+
+    describe("Test GET /events/:id/eventtickets", () => {
+      test("GET /events/:id/eventtickets successfully", async () => {
+        const response = await api.get(`/events/${testEvent.id}/eventtickets`);
+        expect(response.status).toBe(200);
+        expect(response.body[0].eventId).toEqual(testEvent.id);
+        expect(response.body[0].price).toEqual(testTicketType.price);
+        expect(response.body[0].amount).toEqual(testTicketType.amount);
+        expect(response.body[0].domainWhitelist).toEqual(
+          testTicketType.domainWhitelist,
+        );
+      });
+
+      test("GET /events/:id/eventtickets when id doesn't exist", async () => {
+        const response = await api.get(`/events/1/eventtickets`);
+        expect(response.status).toBe(404);
+        expect(response.text).toEqual("Evento no encontrado");
+      });
+    });
+
+    describe("Test GET /events/:id/attendees", () => {
+      test("GET /events/:id/attendees successfully", async () => {
+        const response = await api.get(`/events/${testEvent.id}/attendees`);
+        expect(response.status).toBe(200);
+        expect(response.body[0].id).toEqual(testUser2.id);
+      });
+
+      test("GET /events/:id/attendees when id doesn't exist", async () => {
+        const response = await api.get(`/events/1/attendees`);
+        expect(response.status).toBe(404);
+        expect(response.text).toEqual("Evento no encontrado");
+      });
+    });
+
+    describe("Test GET events/:id/... with no ticket types", () => {
+      beforeAll(async () => {
+        await app.context.db.models.Ticket.destroy({
+          where: {},
+          truncate: true,
+        });
+        await app.context.db.models.TicketType.destroy({
+          where: {},
+          truncate: true,
+        });
+      });
+      test("GET /events/:id/eventtickets", async () => {
+        const response = await api.get(`/events/${testEvent.id}/eventtickets`);
+        expect(response.status).toBe(404);
+        expect(response.text).toEqual(
+          "Tipos de ticket para este evento no encontrados",
+        );
+      });
+    });
   });
+
   describe("Test POST route", () => {
     test("POST /events", async () => {
       const requestBody = {
@@ -141,6 +209,20 @@ describe("Test events routes", () => {
         .set("Authorization", `Bearer ${accessToken}`);
       expect(response.status).toBe(404);
       expect(response.body).toEqual({});
+    });
+  });
+
+  describe("Test GET all events with no events", () => {
+    beforeAll(async () => {
+      await app.context.db.models.Event.destroy({
+        where: {},
+        truncate: true,
+      });
+    });
+    test("GET /events", async () => {
+      const response = await api.get("/events");
+      expect(response.status).toBe(404);
+      expect(response.text).toEqual("Eventos no encontrados");
     });
   });
 });
