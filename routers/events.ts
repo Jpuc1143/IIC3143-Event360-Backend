@@ -105,7 +105,7 @@ router.post("/", verifyLogin, verifyOrganizer, async (ctx, next) => {
     await next();
   } catch (error) {
     ctx.status = 500;
-    ctx.body = { error: "Internal Server Error" };
+    ctx.body = { error: error.message };
   }
 });
 

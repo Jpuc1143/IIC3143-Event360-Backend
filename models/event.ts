@@ -12,7 +12,15 @@ import {
 import TicketType from "./ticketType";
 import User from "./user";
 
-@Table
+@Table({
+  validate: {
+    myCustomValidator(this: Event) {
+      if (this.endDate < this.startDate) {
+        throw "La fecha de término no puede ser anterior a la de inicio";
+      }
+    },
+  },
+})
 export default class Event extends Model {
   @Default(DataType.UUIDV4)
   @Column({ primaryKey: true })
@@ -45,6 +53,15 @@ export default class Event extends Model {
   @Column({
     type: DataType.DATE,
     allowNull: false,
+    validate: {
+      custVal: (creationDate: Date) => {
+        const currentDate = new Date();
+        currentDate.setSeconds(currentDate.getSeconds() - 1);
+        if (creationDate < currentDate) {
+          throw "La fecha del evento no puede ser anterior al momento actual";
+        }
+      },
+    },
   })
   startDate!: Date;
 

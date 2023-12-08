@@ -25,6 +25,8 @@ beforeAll(async () => {
   testUser2 = await app.context.db.models.User.create({
     auth: "example-auth-data2",
   });
+  const endDate = new Date();
+  endDate.setHours(endDate.getHours() + 1);
   testEvent = await app.context.db.models.Event.create({
     userId: testUser.id,
     name: "Ombligo G19",
@@ -34,7 +36,7 @@ beforeAll(async () => {
     location: "Belly Beach",
     image: "loremipsum.com",
     startDate: new Date(),
-    endDate: new Date().getDate() + 3,
+    endDate: endDate,
     merchantCode: "12312321sdfs",
   });
   testTicketType = await app.context.db.models.TicketType.create({
@@ -130,6 +132,8 @@ describe("Test events routes", () => {
 
   describe("Test POST route", () => {
     test("POST /events", async () => {
+      const endDate = new Date();
+      endDate.setHours(endDate.getHours() + 1);
       const requestBody = {
         name: "Ombligo G18",
         organization: "UC G18",
@@ -138,7 +142,7 @@ describe("Test events routes", () => {
         location: "Belly Beach",
         image: "loremipsum.com",
         startDate: new Date(),
-        endDate: new Date().getDate() + 3,
+        endDate: endDate,
         merchantCode: "12312321sdfs",
         userId: testUser.id,
       };
@@ -188,11 +192,16 @@ describe("Test events routes", () => {
 
   describe("Test events POST when missing argument", () => {
     test("POST /events", async () => {
-      const now = new Date();
       const requestBody = {
-        name: "Hi",
-        startDate: now,
+        name: "Ombligo G18",
+        organization: "UC G18",
+        description: "Descripción de prueba2",
+        eventType: "Presencial",
+        location: "Belly Beach",
+        image: "loremipsum.com",
+        startDate: new Date(),
         merchantCode: "12312321sdfs",
+        userId: testUser.id,
       };
       const response = await api
         .post("/events")
@@ -200,7 +209,65 @@ describe("Test events routes", () => {
         .send(requestBody);
       expect(response.status).toBe(500);
       expect(response.body).toEqual({
-        error: "Internal Server Error",
+        error: "notNull Violation: Event.endDate cannot be null",
+      });
+    });
+  });
+
+  describe("Test events POST when endDate < startDate", () => {
+    test("POST /events", async () => {
+      const endDate = new Date();
+      endDate.setHours(endDate.getHours() - 1);
+      const requestBody = {
+        name: "Ombligo G18",
+        organization: "UC G18",
+        description: "Descripción de prueba2",
+        eventType: "Presencial",
+        location: "Belly Beach",
+        image: "loremipsum.com",
+        startDate: new Date(),
+        endDate: endDate,
+        merchantCode: "12312321sdfs",
+        userId: testUser.id,
+      };
+      const response = await api
+        .post("/events")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send(requestBody);
+      expect(response.status).toBe(500);
+      expect(response.body).toEqual({
+        error:
+          "Validation error: La fecha de término no puede ser anterior a la de inicio",
+      });
+    });
+  });
+
+  describe("Test events POST when startDate < currentDate", () => {
+    test("POST /events", async () => {
+      const startDate = new Date();
+      startDate.setHours(startDate.getHours() - 1);
+      const endDate = new Date();
+      endDate.setHours(endDate.getHours() + 1);
+      const requestBody = {
+        name: "Ombligo G18",
+        organization: "UC G18",
+        description: "Descripción de prueba2",
+        eventType: "Presencial",
+        location: "Belly Beach",
+        image: "loremipsum.com",
+        startDate: startDate,
+        endDate: endDate,
+        merchantCode: "12312321sdfs",
+        userId: testUser.id,
+      };
+      const response = await api
+        .post("/events")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send(requestBody);
+      expect(response.status).toBe(500);
+      expect(response.body).toEqual({
+        error:
+          "Validation error: La fecha del evento no puede ser anterior al momento actual",
       });
     });
   });
