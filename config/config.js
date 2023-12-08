@@ -1,7 +1,8 @@
+require("dotenv").config();
 module.exports = {
   development: {
-    dialect: "sqlite",
-    storage: "db.sqlite",
+    url: process.env.DB_URI || "sqlite:///db.sqlite",
+    dialect: process.env.DB_DIALECT || "sqlite",
   },
   test: {
     dialect: "sqlite",
@@ -9,10 +10,7 @@ module.exports = {
     logging: false,
   },
   production: {
-    username: "root",
-    password: null,
-    database: "database_production",
-    host: "127.0.0.1",
-    dialect: "mysql",
+    url: process.env.DB_URI,
+    dialect: process.env.DB_DIALECT,
   },
 };
