@@ -1,8 +1,8 @@
 require("dotenv").config();
 module.exports = {
   development: {
-    url: process.env.DB_URI || "sqlite:///db.sqlite",
-    dialect: process.env.DB_DIALECT || "sqlite",
+    storage: "./db.sqlite",
+    dialect: "sqlite",
   },
   test: {
     dialect: "sqlite",
