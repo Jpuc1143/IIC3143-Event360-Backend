@@ -7,6 +7,7 @@ import { koaJwtSecret } from "jwks-rsa";
 import cors from "@koa/cors";
 import { router } from "./routers";
 import { router as usersRouter } from "./routers/users";
+import { router as adminsRouter } from "./routers/admins";
 import { router as eventsRouter } from "./routers/events";
 import { router as ticketsRouter } from "./routers/tickets";
 import { router as ticketTypesRouter } from "./routers/ticketTypes";
@@ -45,6 +46,9 @@ app.use(router.allowedMethods());
 
 app.use(usersRouter.routes());
 app.use(usersRouter.allowedMethods());
+
+app.use(adminsRouter.routes());
+app.use(adminsRouter.allowedMethods());
 
 app.use(eventsRouter.routes());
 app.use(eventsRouter.allowedMethods());

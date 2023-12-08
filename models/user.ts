@@ -37,6 +37,13 @@ export default class User extends Model {
   @Column
   picture: string;
 
+  @Column({ defaultValue: false })
+  admin: boolean;
+
+  // verified/pending/unsolicited
+  @Column({ defaultValue: "unsolicited" })
+  organizer: string;
+
   @HasMany(() => Event)
   events!: Event[];
 
