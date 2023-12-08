@@ -1,6 +1,7 @@
 import Router from "@koa/router";
 import Ticket from "../models/ticket";
 import TicketType from "../models/ticketType";
+import User from "../models/user";
 import { verifyLogin } from "../middlewares/verifyLogin";
 
 export const router = new Router({ prefix: "/tickets" });
@@ -27,6 +28,17 @@ router.post("/", async (ctx, next) => {
       ctx.throw(400, "No quedan tickets disponibles");
     }
     const userId = ctx.state.currentUser.id;
+    const user = await User.findByPk(userId);
+    const userEmail = user.dataValues.email;
+    const domainWhitelist = ticketType.domainWhitelist;
+    const emailRegex = /@(.*)$/;
+    let userDomain;
+    if (userEmail) {
+      userDomain = userEmail.match(emailRegex)[1];
+    }
+    if (userEmail && !userDomain.includes(domainWhitelist)) {
+      ctx.throw(400, "El dominio del correo electrónico no está permitido");
+    }
     const newTicket = await Ticket.create({
       userId,
       ticketTypeId,

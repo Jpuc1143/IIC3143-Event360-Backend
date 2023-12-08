@@ -4,12 +4,27 @@ import { configureDatabase, closeDatabase } from "../database";
 import { accessToken } from "../fixtures/testingToken";
 
 const api = request(app.callback());
-let testUser, testEvent, testTicketType, testTicket;
+let testUser, testUser2, testEvent, testTicketType, testTicket;
+
+async function createTestUser(admin: boolean, organizer: string) {
+  const newTestUserRequest = await api
+    .get("/users")
+    .set("Authorization", `Bearer ${accessToken}`);
+  const newTestUser = await app.context.db.models.User.findByPk(
+    newTestUserRequest.body[0].id,
+  );
+  newTestUser.admin = admin;
+  newTestUser.organizer = organizer;
+  await newTestUser.save();
+  return newTestUser;
+}
 
 beforeAll(async () => {
   app.context.db = await configureDatabase();
+  testUser2 = await createTestUser(true, "verified");
   testUser = await app.context.db.models.User.create({
     auth: "example-auth-data",
+    email: "test@uc.cl",
   });
   const endDate = new Date();
   endDate.setHours(endDate.getHours() + 1);
@@ -62,6 +77,8 @@ describe("Test tickets routes", () => {
         jest
           .spyOn(app.context.db.models.Ticket, "create")
           .mockRejectedValueOnce(new Error());
+        testUser2.email = "test@uc.cl";
+        await testUser2.save();
         const prevCount = await app.context.db.models.Ticket.count();
         const requestBody = { ticketTypeId: testTicketType.id };
         const response = await api
@@ -73,8 +90,29 @@ describe("Test tickets routes", () => {
         expect(await app.context.db.models.Ticket.count()).toEqual(prevCount);
       });
     });
+
+    describe("Using an invalid email", () => {
+      test("POST /tickets", async () => {
+        testUser2.email = "test@gmail.com";
+        await testUser2.save();
+        const prevCount = await app.context.db.models.Ticket.count();
+        const requestBody = { ticketTypeId: testTicketType.id };
+        const response = await api
+          .post("/tickets")
+          .set("Authorization", `Bearer ${accessToken}`)
+          .send(requestBody);
+        expect(response.status).toBe(400);
+        expect(response.text).toEqual(
+          "El dominio del correo electrónico no está permitido",
+        );
+        expect(await app.context.db.models.Ticket.count()).toEqual(prevCount);
+      });
+    });
+
     test("POST /tickets", async () => {
       const prevCount = await app.context.db.models.Ticket.count();
+      testUser2.email = "test@uc.cl";
+      await testUser2.save();
       const requestBody = { ticketTypeId: testTicketType.id };
       const response = await api
         .post("/tickets")
@@ -85,6 +123,7 @@ describe("Test tickets routes", () => {
       expect(response.body.status).toEqual("pending");
       expect(await app.context.db.models.Ticket.count()).toEqual(prevCount + 1);
     });
+
     describe("Not logged in", () => {
       test("POST /tickets", async () => {
         const prevCount = await app.context.db.models.Ticket.count();
@@ -95,11 +134,14 @@ describe("Test tickets routes", () => {
         expect(await app.context.db.models.Ticket.count()).toEqual(prevCount);
       });
     });
+
     describe("Not enough tickets", () => {
       // Como se creó un ticket al principio y uno en el test anterior
       // no quedan tickets disponibles
       test("POST /tickets", async () => {
         const prevCount = await app.context.db.models.Ticket.count();
+        testUser2.email = "test@uc.cl";
+        await testUser2.save();
         const requestBody = { ticketTypeId: testTicketType.id };
         const response = await api
           .post("/tickets")
