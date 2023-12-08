@@ -1,5 +1,6 @@
 import { UUID } from "crypto";
 import {
+  Scopes,
   Table,
   Column,
   Model,
@@ -9,8 +10,10 @@ import {
   Default,
   DataType,
 } from "sequelize-typescript";
+
 import TicketType from "./ticketType.js";
 import User from "./user.js";
+import Ticket from "./ticket.js";
 
 @Table({
   validate: {
@@ -100,4 +103,22 @@ export default class Event extends Model {
 
   @HasMany(() => TicketType)
   ticketTypes!: TicketType[];
+
+  async notify(msg: string) {
+    const event = await Event.findByPk(this.id, {
+      include: [
+        {
+          model: TicketType,
+          include: [
+            {
+              model: Ticket,
+              include: [User],
+            },
+          ],
+        },
+      ],
+    });
+    console.log(event);
+    console.log(msg);
+  }
 }

@@ -10,9 +10,6 @@ export const router = new Router({ prefix: "/events" });
 
 router.get("/", async (ctx, next) => {
   const events = await Event.findAll();
-  if (events.length === 0) {
-    ctx.throw(404, "Eventos no encontrados");
-  }
   ctx.response.body = events;
   await next();
 });
@@ -133,5 +130,15 @@ router.delete("/:id", verifyLogin, async (ctx, next) => {
   const deletedEvent = await event.destroy();
   ctx.body = deletedEvent;
   ctx.status = 204;
+  await next();
+});
+
+router.post("/:id/notify", verifyLogin, async (ctx, next) => {
+  const event = await Event.findByPk(ctx.params.id);
+  if (ctx.state.currentUser.id !== event.userId) {
+    ctx.throw(403, "Usuario no es organizador");
+  }
+  await event.notify("test");
+
   await next();
 });
