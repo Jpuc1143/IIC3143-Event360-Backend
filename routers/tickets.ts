@@ -1,8 +1,8 @@
 import Router from "@koa/router";
-import Ticket from "../models/ticket";
-import TicketType from "../models/ticketType";
-import User from "../models/user";
-import { verifyLogin } from "../middlewares/verifyLogin";
+import Ticket from "../models/ticket.js";
+import TicketType from "../models/ticketType.js";
+import User from "../models/user.js";
+import { verifyLogin } from "../middlewares/verifyLogin.js";
 
 export const router = new Router({ prefix: "/tickets" });
 

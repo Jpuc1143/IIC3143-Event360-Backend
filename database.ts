@@ -1,5 +1,5 @@
 import { Sequelize } from "sequelize-typescript";
-import config from "./config/config.js";
+import config from "./config/config.cjs";
 
 const sequelize = new Sequelize(config[process.env.NODE_ENV || "development"]);
 sequelize.addModels([__dirname + "/models/*.ts"]);

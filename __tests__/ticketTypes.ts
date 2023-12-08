@@ -1,6 +1,6 @@
 import request from "supertest";
-import { app } from "../app";
-import { configureDatabase, closeDatabase } from "../database";
+import { app } from "../app.js";
+import { configureDatabase, closeDatabase } from "../database.js";
 
 const api = request(app.callback());
 let testUser, testEvent, testTicketType;

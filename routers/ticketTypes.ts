@@ -1,5 +1,5 @@
 import Router from "@koa/router";
-import TicketType from "../models/ticketType";
+import TicketType from "../models/ticketType.js";
 // import Event from "../models/event";
 
 export const router = new Router({ prefix: "/tickettypes" });

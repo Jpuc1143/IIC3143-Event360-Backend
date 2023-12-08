@@ -1,5 +1,5 @@
-import { app } from "./app";
-import { configureDatabase, closeDatabase } from "./database";
+import { app } from "./app.js";
+import { configureDatabase, closeDatabase } from "./database.js";
 
 const PORT = process.env.PORT || 8080;
 

@@ -1,7 +1,7 @@
 import Router from "@koa/router";
-import User from "../models/user";
-import { verifyLogin } from "../middlewares/verifyLogin";
-import { verifyAdmin } from "../middlewares/verifyAdmin";
+import User from "../models/user.js";
+import { verifyLogin } from "../middlewares/verifyLogin.js";
+import { verifyAdmin } from "../middlewares/verifyAdmin.js";
 
 export const router = new Router({ prefix: "/admins" });
 

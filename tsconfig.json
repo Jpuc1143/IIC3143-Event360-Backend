@@ -3,9 +3,11 @@
     "esModuleInterop": true,
     "outDir": "./build",
     "target": "es6", // or a more recent ecmascript version
+    "module": "es2015",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "allowJs": true
   },
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "build"]
 }

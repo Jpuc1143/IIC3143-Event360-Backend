@@ -1,7 +1,7 @@
 import request from "supertest";
-import { app } from "../app";
-import { configureDatabase, closeDatabase } from "../database";
-import { accessToken } from "../fixtures/testingToken";
+import { app } from "../app.js";
+import { configureDatabase, closeDatabase } from "../database.js";
+import { accessToken } from "../fixtures/testingToken.js";
 
 const api = request(app.callback());
 let testUser, testUser2, testEvent, testTicketType, testTicket;

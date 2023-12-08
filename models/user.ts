@@ -8,8 +8,8 @@ import {
   DataType,
   BeforeCreate,
 } from "sequelize-typescript";
-import Ticket from "./ticket";
-import Event from "./event";
+import Ticket from "./ticket.js";
+import Event from "./event.js";
 import { ManagementClient } from "auth0";
 import "dotenv/config";
 
