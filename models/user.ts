@@ -28,15 +28,7 @@ export default class User extends Model {
   @Column
   auth: string;
 
-  @Column({
-    validate: {
-      custVal: (value: string) => {
-        if (!/\b[A-Za-z0-9._%+-]+@uc\.cl\b/.test(value)) {
-          throw "Email no válido";
-        }
-      },
-    },
-  })
+  @Column
   email: string;
 
   @Column
