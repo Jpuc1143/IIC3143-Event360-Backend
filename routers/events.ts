@@ -4,6 +4,7 @@ import Event from "../models/event";
 import Ticket from "../models/ticket";
 import TicketType from "../models/ticketType";
 import { verifyLogin } from "../middlewares/verifyLogin";
+import { verifyOrganizer } from "../middlewares/verifyOrganizer";
 
 export const router = new Router({ prefix: "/events" });
 
@@ -65,7 +66,7 @@ router.get("/:id/attendees", async (ctx, next) => {
   await next();
 });
 
-router.post("/", verifyLogin, async (ctx, next) => {
+router.post("/", verifyLogin, verifyOrganizer, async (ctx, next) => {
   try {
     const {
       name,

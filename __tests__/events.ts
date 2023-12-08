@@ -6,12 +6,22 @@ import { accessToken } from "../fixtures/testingToken";
 const api = request(app.callback());
 let testUser, testUser2, testEvent, testTicketType;
 
+async function createTestUser(admin: boolean, organizer: string) {
+  const newTestUserRequest = await api
+    .get("/users")
+    .set("Authorization", `Bearer ${accessToken}`);
+  const newTestUser = await app.context.db.models.User.findByPk(
+    newTestUserRequest.body[0].id,
+  );
+  newTestUser.admin = admin;
+  newTestUser.organizer = organizer;
+  await newTestUser.save();
+  return newTestUser;
+}
+
 beforeAll(async () => {
   app.context.db = await configureDatabase();
-  testUser = await app.context.db.models.User.create({
-    auth: "example-auth-data",
-    email: "hola@uc.cl",
-  });
+  testUser = await createTestUser(true, "verified");
   testUser2 = await app.context.db.models.User.create({
     auth: "example-auth-data2",
   });
@@ -150,6 +160,33 @@ describe("Test events routes", () => {
         image: "loremipsum.com",
         merchantCode: "12312321sdfs",
       });
+    });
+
+    test("POST /events with non verified user", async () => {
+      testUser.organizer = "unsolicited";
+      await testUser.save();
+      const requestBody = {
+        name: "Ombligo G18",
+        organization: "UC G18",
+        description: "Descripción de prueba2",
+        eventType: "Presencial",
+        location: "Belly Beach",
+        image: "loremipsum.com",
+        startDate: new Date(),
+        endDate: new Date().getDate() + 3,
+        merchantCode: "12312321sdfs",
+        userId: testUser.id,
+      };
+      const response = await api
+        .post("/events")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send(requestBody);
+      expect(response.status).toBe(401);
+      expect(response.text).toEqual(
+        "No estas verificado como organizador de eventos",
+      );
+      testUser.organizer = "verified";
+      await testUser.save();
     });
   });
 
