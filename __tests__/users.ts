@@ -25,6 +25,8 @@ beforeAll(async () => {
   testUser2 = await app.context.db.models.User.create({
     auth: "example-auth-data2",
   });
+  const endDate = new Date();
+  endDate.setHours(endDate.getHours() + 1);
   testEvent = await app.context.db.models.Event.create({
     userId: testUser.id,
     name: "Ombligo G19",
@@ -34,7 +36,7 @@ beforeAll(async () => {
     location: "Belly Beach",
     image: "loremipsum.com",
     startDate: new Date(),
-    endDate: new Date().getDate() + 3,
+    endDate: endDate,
     merchantCode: "12312321sdfs",
   });
   testTicketType = await app.context.db.models.TicketType.create({
