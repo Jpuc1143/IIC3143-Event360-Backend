@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "nodemon server.ts",
-    "test": "jest --runInBand",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
     "build": "tsc",
     "lint": "eslint .",
     "lint-check": "eslint . && prettier . --check",
@@ -89,7 +89,12 @@
       "!**/database.ts/**"
     ],
     "transform": {
-      "\\.ts$": "ts-jest"
+      "\\.ts$": [
+        "ts-jest",
+        {
+          "useESM": true
+        }
+      ]
     },
     "coverageThreshold": {
       "global": {
@@ -111,6 +116,12 @@
       "/migrations/",
       "/server.ts/",
       "/database.ts/"
-    ]
+    ],
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
+    }
   }
 }
