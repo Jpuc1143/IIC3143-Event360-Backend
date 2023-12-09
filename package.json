@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "nodemon server.ts",
+    "start:prod": "tsc && node build/server.js",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
     "build": "tsc",
     "lint": "eslint .",
