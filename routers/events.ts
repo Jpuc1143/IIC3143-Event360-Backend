@@ -9,7 +9,10 @@ import { verifyOrganizer } from "../middlewares/verifyOrganizer";
 export const router = new Router({ prefix: "/events" });
 
 router.get("/", async (ctx, next) => {
-  const events = await Event.findAll();
+  const page = parseInt(ctx.query.page as string) || 1;
+  const limit = 9;
+  const offset = (page - 1) * limit;
+  const events = await Event.findAll({ limit: limit, offset: offset });
   if (events.length === 0) {
     ctx.throw(404, "Eventos no encontrados");
   }
