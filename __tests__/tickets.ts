@@ -2,6 +2,7 @@ import request from "supertest";
 import { app } from "../app.js";
 import { configureDatabase, closeDatabase } from "../database.js";
 import { accessToken } from "../fixtures/testingToken.js";
+import { jest } from "@jest/globals";
 
 const api = request(app.callback());
 let testUser, testUser2, testEvent, testTicketType, testTicket;

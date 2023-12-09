@@ -5,7 +5,7 @@ const PORT = process.env.PORT || 8080;
 
 const startServer = async () => {
   try {
-    const db = await configureDatabase();
+    const db = await configureDatabase(false);
 
     app.context.db = db;
 

@@ -8,11 +8,13 @@ import Event from "./models/event.js";
 const sequelize = new Sequelize(config[process.env.NODE_ENV || "development"]);
 sequelize.addModels([Ticket, TicketType, Event, User]);
 
-export const configureDatabase = async (): Promise<Sequelize> => {
+export const configureDatabase = async (sync = true): Promise<Sequelize> => {
   try {
     await sequelize.authenticate();
     console.log("Conexión a la base de datos establecida correctamente.");
-    //await sequelize.sync();
+    if (sync) {
+      await sequelize.sync();
+    }
     return sequelize;
   } catch (error) {
     console.error("Error al conectar con la base de datos:", error);

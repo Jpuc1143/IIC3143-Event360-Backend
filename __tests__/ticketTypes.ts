@@ -1,6 +1,7 @@
 import request from "supertest";
 import { app } from "../app.js";
 import { configureDatabase, closeDatabase } from "../database.js";
+import { jest } from "@jest/globals";
 
 const api = request(app.callback());
 let testUser, testEvent, testTicketType;
