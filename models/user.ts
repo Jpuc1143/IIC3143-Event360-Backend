@@ -8,8 +8,8 @@ import {
   DataType,
   BeforeCreate,
 } from "sequelize-typescript";
-import Ticket from "./ticket";
-import Event from "./event";
+import Ticket from "./ticket.js";
+import Event from "./event.js";
 import { ManagementClient } from "auth0";
 import "dotenv/config";
 
@@ -51,8 +51,8 @@ export default class User extends Model {
   tickets!: Ticket[];
 
   @BeforeCreate
-  static fetchAuth0Data(user: User) {
-    user.refreshAuth0Data();
+  static async fetchAuth0Data(user: User) {
+    await user.refreshAuth0Data();
   }
 
   async refreshAuth0Data() {
@@ -61,7 +61,6 @@ export default class User extends Model {
       this.setDataValue("email", data.email);
       this.setDataValue("name", data.name);
       this.setDataValue("picture", data.picture);
-      this.save();
     } catch (error) {
       return;
     }

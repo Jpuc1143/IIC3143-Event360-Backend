@@ -9,8 +9,8 @@ import {
   Default,
   DataType,
 } from "sequelize-typescript";
-import TicketType from "./ticketType";
-import User from "./user";
+import TicketType from "./ticketType.js";
+import User from "./user.js";
 
 @Table({
   validate: {
@@ -96,7 +96,7 @@ export default class Event extends Model {
   userId!: UUID;
 
   @BelongsTo(() => User)
-  user!: User;
+  public user!: Awaited<User>;
 
   @HasMany(() => TicketType)
   ticketTypes!: TicketType[];

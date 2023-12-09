@@ -1,10 +1,10 @@
 import Router from "@koa/router";
-import User from "../models/user";
-import Event from "../models/event";
-import Ticket from "../models/ticket";
-import TicketType from "../models/ticketType";
+import User from "../models/user.js";
+import Event from "../models/event.js";
+import Ticket from "../models/ticket.js";
+import TicketType from "../models/ticketType.js";
 import { Op } from "sequelize";
-import { verifyLogin } from "../middlewares/verifyLogin";
+import { verifyLogin } from "../middlewares/verifyLogin.js";
 
 export const router = new Router({ prefix: "/users" });
 

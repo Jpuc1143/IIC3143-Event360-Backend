@@ -2,10 +2,12 @@
   "name": "iic3143-event360-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "app.ts",
+  "main": "server.ts",
+  "type": "module",
   "scripts": {
     "start": "nodemon server.ts",
-    "test": "jest --runInBand",
+    "start:prod": "tsc && node build/server.js",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
     "build": "tsc",
     "lint": "eslint .",
     "lint-check": "eslint . && prettier . --check",
@@ -88,7 +90,12 @@
       "!**/database.ts/**"
     ],
     "transform": {
-      "\\.ts$": "ts-jest"
+      "\\.ts$": [
+        "ts-jest",
+        {
+          "useESM": true
+        }
+      ]
     },
     "coverageThreshold": {
       "global": {
@@ -110,6 +117,12 @@
       "/migrations/",
       "/server.ts/",
       "/database.ts/"
-    ]
+    ],
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
+    }
   }
 }
