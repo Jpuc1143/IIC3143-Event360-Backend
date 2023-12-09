@@ -96,7 +96,7 @@ export default class Event extends Model {
   userId!: UUID;
 
   @BelongsTo(() => User)
-  user!: User;
+  public user!: Awaited<User>;
 
   @HasMany(() => TicketType)
   ticketTypes!: TicketType[];

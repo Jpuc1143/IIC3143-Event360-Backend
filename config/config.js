@@ -1,5 +1,7 @@
-require("dotenv").config();
-module.exports = {
+import { configDotenv } from "dotenv";
+configDotenv();
+
+export default {
   development: {
     storage: "./db.sqlite",
     dialect: "sqlite",

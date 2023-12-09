@@ -29,7 +29,7 @@ export default class Ticket extends Model {
   userId!: UUID;
 
   @BelongsTo(() => User)
-  user!: User;
+  public user!: Awaited<User>;
 
   @ForeignKey(() => TicketType)
   @Column
