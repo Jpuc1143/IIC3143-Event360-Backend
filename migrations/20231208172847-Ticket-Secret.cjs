@@ -5,7 +5,7 @@ const { v4 } = require("uuid");
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.addColumn("Tickets", "secret", {
-      type: Sequelize.UUIDV4,
+      type: Sequelize.UUID,
       allowNull: false,
       defaultValue: v4,
     });
