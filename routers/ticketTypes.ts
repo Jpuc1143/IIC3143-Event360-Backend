@@ -28,8 +28,9 @@ router.post("/", async (ctx, next) => {
     ctx.body = newTicketType;
     await next();
   } catch (error) {
-    ctx.status = 500;
-    ctx.body = { error: "Internal Server Error" };
+    ctx.status = 422;
+    console.log(error);
+    ctx.body = { error: "Missing ticket types parameters" };
   }
 });
 
