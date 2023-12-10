@@ -181,7 +181,7 @@ describe("Test events routes", () => {
         .post("/events")
         .set("Authorization", `Bearer ${accessToken}`)
         .send(requestBody);
-      expect(response.status).toBe(401);
+      expect(response.status).toBe(403);
       expect(response.text).toEqual(
         "No estas verificado como organizador de eventos",
       );
@@ -326,8 +326,8 @@ describe("Test events routes", () => {
     });
     test("GET /events", async () => {
       const response = await api.get("/events");
-      expect(response.status).toBe(404);
-      expect(response.text).toEqual("Eventos no encontrados");
+      expect(response.status).toBe(200);
+      expect(response.text).toEqual("[]");
     });
   });
 });
