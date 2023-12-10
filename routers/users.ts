@@ -37,13 +37,20 @@ router.get("/:id/events", async (ctx, next) => {
   const eventsIdsList = ticketTypes.map((ticketType) => ticketType.eventId);
   const page = parseInt(ctx.query.page as string) || 1;
   const limit = nResultsLimit;
+  const totalCount = await Event.count({
+    where: { id: { [Op.in]: eventsIdsList } },
+  });
+  const totalPages = Math.ceil(totalCount / limit);
   const offset = (page - 1) * limit;
   const events = await Event.findAll({
     where: { id: { [Op.in]: eventsIdsList } },
     limit: limit,
     offset: offset,
   });
-  ctx.response.body = events;
+  ctx.response.body = {
+    events,
+    totalPages,
+  };
   await next();
 });
 
@@ -54,13 +61,18 @@ router.get("/:id/events_organized", async (ctx, next) => {
   }
   const page = parseInt(ctx.query.page as string) || 1;
   const limit = nResultsLimit;
+  const totalCount = await Event.count({ where: { userId: user.id } });
+  const totalPages = Math.ceil(totalCount / limit);
   const offset = (page - 1) * limit;
   const myEvents = await Event.findAll({
     where: { userId: user.id },
     limit: limit,
     offset: offset,
   });
-  ctx.response.body = myEvents;
+  ctx.response.body = {
+    myEvents,
+    totalPages,
+  };
   await next();
 });
 
