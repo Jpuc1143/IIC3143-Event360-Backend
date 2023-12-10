@@ -1,6 +1,5 @@
 import { UUID } from "crypto";
 import {
-  Scopes,
   Table,
   Column,
   Model,
@@ -14,6 +13,17 @@ import {
 import TicketType from "./ticketType.js";
 import User from "./user.js";
 import Ticket from "./ticket.js";
+
+import { ServerClient } from "postmark";
+import { configDotenv } from "dotenv";
+configDotenv();
+
+let mailClient: ServerClient;
+try {
+  mailClient = new ServerClient(process.env.MAIL_TOKEN);
+} catch (error) {
+  console.log("Mail client is not available");
+}
 
 @Table({
   validate: {
@@ -118,7 +128,20 @@ export default class Event extends Model {
         },
       ],
     });
-    console.log(event);
-    console.log(msg);
+    event.ticketTypes.forEach((ticketType) =>
+      ticketType.tickets.forEach((ticket) => {
+        try {
+          mailClient.sendEmail({
+            From: process.env.MAIL_ADDRESS,
+            To: ticket.user.email,
+            Subject: "Información de Evento",
+            HtmlBody: `<h2>Event360</h2>Buenos dias ${ticket.user.name}, el evento ${event.name} desea comunicarle lo siguiente:<br><p>${msg}</p>`,
+            MessageStream: "broadcast",
+          });
+        } catch {
+          console.log("Email failed", ticket.user.email);
+        }
+      }),
+    );
   }
 }

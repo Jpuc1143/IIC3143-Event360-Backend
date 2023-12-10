@@ -48,6 +48,7 @@ router.post("/", async (ctx, next) => {
     ctx.body = newTicket;
     await next();
   } catch (error) {
+    console.log(error);
     ctx.status = error.status || 500;
     ctx.body = error.message || { error: "Internal Server Error" };
   }

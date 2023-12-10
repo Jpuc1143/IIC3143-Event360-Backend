@@ -140,5 +140,6 @@ router.post("/:id/notify", verifyLogin, async (ctx, next) => {
   }
   await event.notify("test");
 
+  ctx.status = 201;
   await next();
 });
