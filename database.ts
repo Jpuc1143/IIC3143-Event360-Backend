@@ -5,7 +5,15 @@ import User from "./models/user.js";
 import Ticket from "./models/ticket.js";
 import Event from "./models/event.js";
 
-const sequelize = new Sequelize(config[process.env.NODE_ENV || "development"]);
+let sequelize: Sequelize;
+if (process.env.DB_URI !== undefined && process.env.DB_URI !== null) {
+  sequelize = new Sequelize(
+    process.env.DB_URI,
+    config[process.env.NODE_ENV || "development"],
+  );
+} else {
+  sequelize = new Sequelize(config[process.env.NODE_ENV || "development"]);
+}
 sequelize.addModels([Ticket, TicketType, Event, User]);
 
 export const configureDatabase = async (sync = true): Promise<Sequelize> => {
