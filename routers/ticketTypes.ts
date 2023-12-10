@@ -17,9 +17,10 @@ router.get("/:id", async (ctx, next) => {
 
 router.post("/", async (ctx, next) => {
   try {
-    const { eventId, price, amount, domainWhitelist } = ctx.request.body;
+    const { eventId, name, price, amount, domainWhitelist } = ctx.request.body;
     const newTicketType = await TicketType.create({
       eventId,
+      name,
       price,
       amount,
       domainWhitelist,
@@ -29,7 +30,6 @@ router.post("/", async (ctx, next) => {
     await next();
   } catch (error) {
     ctx.status = 422;
-    console.log(error);
     ctx.body = { error: "Missing ticket types parameters" };
   }
 });

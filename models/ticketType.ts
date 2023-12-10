@@ -20,6 +20,11 @@ export default class TicketType extends Model {
   id!: UUID;
 
   @Column({
+    type: DataType.STRING,
+  })
+  name!: string;
+
+  @Column({
     type: DataType.INTEGER,
   })
   price!: number;

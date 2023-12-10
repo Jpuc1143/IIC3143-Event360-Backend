@@ -43,6 +43,7 @@ beforeAll(async () => {
   });
   testTicketType = await app.context.db.models.TicketType.create({
     eventId: testEvent.id,
+    name: "Premium",
     price: 9990,
     amount: 2,
     domainWhitelist: "uc.cl",
