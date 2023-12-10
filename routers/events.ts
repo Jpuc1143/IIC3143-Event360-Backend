@@ -143,11 +143,10 @@ router.post("/:id/verify", verifyLogin, async (ctx, next) => {
   }
 
   const { secret } = ctx.request.body;
-  const ticket = await Ticket.findOne({ where: { secret } });
+  const ticket = await Ticket.findOne({ where: { secret }, include: User });
   if (ticket === null) {
     ctx.throw(404, "Ticket secret is not valid");
   }
-  console.log(ticket);
   ctx.body = ticket;
   await next();
 });
