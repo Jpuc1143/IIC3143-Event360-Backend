@@ -78,8 +78,10 @@ describe("Test ticketTypes routes", () => {
           amount: 150,
         };
         const response = await api.post("/tickettypes").send(requestBody);
-        expect(response.status).toBe(500);
-        expect(response.body).toEqual({ error: "Internal Server Error" });
+        expect(response.status).toBe(422);
+        expect(response.body).toEqual({
+          error: "Missing ticket types parameters",
+        });
         expect(await app.context.db.models.TicketType.count()).toEqual(
           prevCount,
         );
