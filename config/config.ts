@@ -12,7 +12,6 @@ export default {
     logging: false,
   },
   production: {
-    url: process.env.DB_URI,
     dialect: process.env.DB_DIALECT,
   },
 };
