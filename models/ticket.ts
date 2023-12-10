@@ -28,6 +28,10 @@ export default class Ticket extends Model {
   })
   userId!: UUID;
 
+  @Default(DataType.UUIDV4)
+  @Column(DataType.UUID)
+  secret: UUID;
+
   @BelongsTo(() => User)
   public user!: Awaited<User>;
 
