@@ -52,3 +52,21 @@ router.post("/", async (ctx, next) => {
     ctx.body = error.message || { error: "Internal Server Error" };
   }
 });
+
+router.get("/:id/qr", verifyLogin, async (ctx, next) => {
+  const ticket = await Ticket.findByPk(ctx.params.id);
+  if (ticket.userId !== ctx.state.currentUser.id) {
+    ctx.throw(403, "Not allowed to read other tickets");
+  }
+  ctx.body = ticket.getQR();
+  ctx.status = 200;
+  ctx.type = "image/png";
+  await next();
+});
+
+router.patch("/:id/checkin", verifyLogin, async (ctx, next) => {
+  const ticket = await Ticket.findByPk(ctx.params.id);
+  ticket.status = "used";
+  await ticket.save();
+  await next();
+});

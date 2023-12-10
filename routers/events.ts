@@ -133,6 +133,21 @@ router.delete("/:id", verifyLogin, async (ctx, next) => {
   await next();
 });
 
+router.post("/:id/verify", verifyLogin, async (ctx, next) => {
+  const event = await Event.findByPk(ctx.params.id);
+  if (ctx.state.currentUser.id !== event.userId) {
+    ctx.throw(403, "Must be the event's organizer");
+  }
+
+  const { secret } = ctx.request.body;
+  const ticket = await Ticket.findOne({ where: { secret }, include: User });
+  if (ticket === null) {
+    ctx.throw(404, "Ticket secret is not valid");
+  }
+  ctx.body = ticket;
+  await next();
+});
+
 router.post("/:id/notify", verifyLogin, async (ctx, next) => {
   const event = await Event.findByPk(ctx.params.id);
   if (ctx.state.currentUser.id !== event.userId) {
