@@ -41,6 +41,7 @@ beforeAll(async () => {
   });
   testTicketType = await app.context.db.models.TicketType.create({
     eventId: testEvent.id,
+    name: "Premium",
     price: 9990,
     amount: 100,
     domainWhitelist: "uc.cl",
@@ -83,6 +84,7 @@ describe("Test events routes", () => {
         expect(response.body[0].eventId).toEqual(testEvent.id);
         expect(response.body[0].price).toEqual(testTicketType.price);
         expect(response.body[0].amount).toEqual(testTicketType.amount);
+        expect(response.body[0].ticketsLeft).toEqual(testTicketType.amount - 1);
         expect(response.body[0].domainWhitelist).toEqual(
           testTicketType.domainWhitelist,
         );

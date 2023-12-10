@@ -27,6 +27,7 @@ beforeAll(async () => {
   });
   testTicketType = await app.context.db.models.TicketType.create({
     eventId: testEvent.id,
+    name: "Premium",
     price: 9990,
     amount: 100,
     domainWhitelist: "uc.cl",
@@ -48,6 +49,7 @@ describe("Test ticketTypes routes", () => {
       expect(response.body).toEqual({
         id: testTicketType.id,
         eventId: testEvent.id,
+        name: "Premium",
         price: 9990,
         amount: 100,
         domainWhitelist: "uc.cl",
@@ -59,7 +61,12 @@ describe("Test ticketTypes routes", () => {
   describe("Test POST routes", () => {
     test("POST /tickettypes", async () => {
       const prevCount = await app.context.db.models.TicketType.count();
-      const requestBody = { eventId: testEvent.id, price: 24990, amount: 150 };
+      const requestBody = {
+        eventId: testEvent.id,
+        name: "General",
+        price: 24990,
+        amount: 150,
+      };
       const response = await api.post("/tickettypes").send(requestBody);
       expect(response.status).toBe(201);
       expect(await app.context.db.models.TicketType.count()).toEqual(

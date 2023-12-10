@@ -28,9 +28,18 @@ router.get("/:id/eventtickets", async (ctx, next) => {
   if (event === null) {
     ctx.throw(404, "Evento no encontrado");
   }
-  const ticketTypes = await TicketType.findAll({
+  const ticketTypesInfo = await TicketType.findAll({
     where: { eventId: ctx.params.id },
   });
+
+  const ticketTypes = await Promise.all(
+    ticketTypesInfo.map(async (ticketType) => {
+      const ticketsLeft = await ticketType.getTicketsLeft();
+      ticketType.setDataValue("ticketsLeft", ticketsLeft);
+      return ticketType;
+    }),
+  );
+  console.log(ticketTypes);
   if (ticketTypes.length === 0) {
     ctx.throw(404, "Tipos de ticket para este evento no encontrados");
   }
