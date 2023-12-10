@@ -11,6 +11,9 @@ import {
 import TicketType from "./ticketType.js";
 import User from "./user.js";
 
+import QRCode from "qrcode";
+import { PassThrough } from "stream";
+
 @Table
 export default class Ticket extends Model {
   @Default(DataType.UUIDV4)
@@ -28,7 +31,8 @@ export default class Ticket extends Model {
   })
   userId!: UUID;
 
-  @Column(DataType.UUIDV4)
+  @Default(DataType.UUIDV4)
+  @Column(DataType.UUID)
   secret: UUID;
 
   @BelongsTo(() => User)
@@ -40,4 +44,10 @@ export default class Ticket extends Model {
 
   @BelongsTo(() => TicketType)
   ticketType!: TicketType;
+
+  getQR() {
+    const stream = new PassThrough();
+    QRCode.toFileStream(stream, this.secret, { scale: 10 });
+    return stream;
+  }
 }
