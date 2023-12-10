@@ -138,7 +138,7 @@ router.post("/:id/notify", verifyLogin, async (ctx, next) => {
   if (ctx.state.currentUser.id !== event.userId) {
     ctx.throw(403, "Usuario no es organizador");
   }
-  await event.notify("test");
+  await event.notify(ctx.request.body.msg);
 
   ctx.status = 201;
   await next();
