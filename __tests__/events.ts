@@ -61,7 +61,7 @@ describe("Test events routes", () => {
     test("GET /events", async () => {
       const response = await api.get("/events");
       expect(response.status).toBe(200);
-      expect(response.body.length).toEqual(1);
+      expect(response.body.events.length).toEqual(1);
     });
 
     test("GET /events/:id", async () => {

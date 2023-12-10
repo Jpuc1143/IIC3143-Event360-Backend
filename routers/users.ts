@@ -8,6 +8,8 @@ import { verifyLogin } from "../middlewares/verifyLogin.js";
 
 export const router = new Router({ prefix: "/users" });
 
+const nResultsLimit = 9;
+
 router.get("/", async (ctx, next) => {
   ctx.response.body = await User.findAll();
   await next();
@@ -33,10 +35,22 @@ router.get("/:id/events", async (ctx, next) => {
     where: { id: { [Op.in]: ticketsTypesIdsList } },
   });
   const eventsIdsList = ticketTypes.map((ticketType) => ticketType.eventId);
-  const events = await Event.findAll({
+  const page = parseInt(ctx.query.page as string) || 1;
+  const limit = nResultsLimit;
+  const totalCount = await Event.count({
     where: { id: { [Op.in]: eventsIdsList } },
   });
-  ctx.response.body = events;
+  const totalPages = Math.ceil(totalCount / limit);
+  const offset = (page - 1) * limit;
+  const events = await Event.findAll({
+    where: { id: { [Op.in]: eventsIdsList } },
+    limit: limit,
+    offset: offset,
+  });
+  ctx.response.body = {
+    events,
+    totalPages,
+  };
   await next();
 });
 
@@ -45,8 +59,20 @@ router.get("/:id/events_organized", async (ctx, next) => {
   if (user === null) {
     ctx.throw(404, "Usuario no encontrado");
   }
-  const myEvents = await Event.findAll({ where: { userId: user.id } });
-  ctx.response.body = myEvents;
+  const page = parseInt(ctx.query.page as string) || 1;
+  const limit = nResultsLimit;
+  const totalCount = await Event.count({ where: { userId: user.id } });
+  const totalPages = Math.ceil(totalCount / limit);
+  const offset = (page - 1) * limit;
+  const myEvents = await Event.findAll({
+    where: { userId: user.id },
+    limit: limit,
+    offset: offset,
+  });
+  ctx.response.body = {
+    myEvents,
+    totalPages,
+  };
   await next();
 });
 

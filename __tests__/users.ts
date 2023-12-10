@@ -79,7 +79,7 @@ describe("Test users routes", () => {
     test("GET /users/:id/events", async () => {
       const response = await api.get(`/users/${testUser2.id}/events`);
       expect(response.status).toBe(200);
-      expect(response.body[0].name).toEqual("Ombligo G19");
+      expect(response.body.events[0].name).toEqual("Ombligo G19");
     });
 
     test("GET /users/:id/events when id doesn't exist", async () => {
@@ -91,7 +91,7 @@ describe("Test users routes", () => {
     test("GET /users/:id/events_organized", async () => {
       const response = await api.get(`/users/${testUser.id}/events_organized`);
       expect(response.status).toBe(200);
-      expect(response.body[0].name).toEqual("Ombligo G19");
+      expect(response.body.myEvents[0].name).toEqual("Ombligo G19");
     });
 
     test("GET /users/:id/events_organized when id doesn't exist", async () => {
