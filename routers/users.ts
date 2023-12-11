@@ -3,7 +3,6 @@ import User from "../models/user.js";
 import Event from "../models/event.js";
 import Ticket from "../models/ticket.js";
 import TicketType from "../models/ticketType.js";
-import { Op } from "sequelize";
 import { verifyLogin } from "../middlewares/verifyLogin.js";
 
 export const router = new Router({ prefix: "/users" });
@@ -27,16 +26,17 @@ router.get("/:id/events", async (ctx, next) => {
   if (user === null) {
     ctx.throw(404, "Usuario no encontrado");
   }
-  const tickets = await Ticket.findAll({ where: { userId: user.id } });
-  const ticketsTypesIdsList = tickets.map((ticket) => ticket.ticketTypeId);
-  const ticketTypes = await TicketType.findAll({
-    where: { id: { [Op.in]: ticketsTypesIdsList } },
+  const tickets = await Ticket.findAll({
+    where: { userId: user.id },
+    include: [
+      {
+        model: TicketType,
+        include: [{ model: Event }],
+      },
+    ],
   });
-  const eventsIdsList = ticketTypes.map((ticketType) => ticketType.eventId);
-  const events = await Event.findAll({
-    where: { id: { [Op.in]: eventsIdsList } },
-  });
-  ctx.response.body = events;
+
+  ctx.response.body = tickets;
   await next();
 });
 

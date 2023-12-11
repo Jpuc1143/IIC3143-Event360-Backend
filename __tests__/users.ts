@@ -80,7 +80,7 @@ describe("Test users routes", () => {
     test("GET /users/:id/events", async () => {
       const response = await api.get(`/users/${testUser2.id}/events`);
       expect(response.status).toBe(200);
-      expect(response.body[0].name).toEqual("Ombligo G19");
+      expect(response.body[0].ticketType.event.name).toEqual("Ombligo G19");
     });
 
     test("GET /users/:id/events when id doesn't exist", async () => {
