@@ -1,15 +1,16 @@
 import Koa from "koa";
 import bodyParser from "@koa/bodyparser";
 import dotenv from "dotenv";
-import { getCurrentUser } from "./middlewares/get_current_user";
+import { getCurrentUser } from "./middlewares/get_current_user.js";
 import jwt from "koa-jwt";
 import { koaJwtSecret } from "jwks-rsa";
 import cors from "@koa/cors";
-import { router } from "./routers";
-import { router as usersRouter } from "./routers/users";
-import { router as eventsRouter } from "./routers/events";
-import { router as ticketsRouter } from "./routers/tickets";
-import { router as ticketTypesRouter } from "./routers/ticketTypes";
+import { router } from "./routers/index.js";
+import { router as usersRouter } from "./routers/users.js";
+import { router as adminsRouter } from "./routers/admins.js";
+import { router as eventsRouter } from "./routers/events.js";
+import { router as ticketsRouter } from "./routers/tickets.js";
+import { router as ticketTypesRouter } from "./routers/ticketTypes.js";
 
 dotenv.config();
 
@@ -45,6 +46,9 @@ app.use(router.allowedMethods());
 
 app.use(usersRouter.routes());
 app.use(usersRouter.allowedMethods());
+
+app.use(adminsRouter.routes());
+app.use(adminsRouter.allowedMethods());
 
 app.use(eventsRouter.routes());
 app.use(eventsRouter.allowedMethods());

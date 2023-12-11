@@ -1,6 +1,6 @@
 import request from "supertest";
-import { app } from "../app";
-import { configureDatabase, closeDatabase } from "../database";
+import { app } from "../app.js";
+import { configureDatabase, closeDatabase } from "../database.js";
 // import { accessToken } from "../fixtures/testingToken"
 
 const api = request(app.callback());

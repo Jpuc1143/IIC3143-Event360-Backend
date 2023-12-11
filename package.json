@@ -2,10 +2,12 @@
   "name": "iic3143-event360-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "app.ts",
+  "main": "server.ts",
+  "type": "module",
   "scripts": {
     "start": "nodemon server.ts",
-    "test": "jest --runInBand",
+    "start:prod": "tsc && node build/server.js",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
     "build": "tsc",
     "lint": "eslint .",
     "lint-check": "eslint . && prettier . --check",
@@ -51,12 +53,17 @@
     "@koa/bodyparser": "^5.0.0",
     "@koa/cors": "^4.0.0",
     "@koa/router": "^12.0.0",
+    "auth0": "^4.1.0",
     "dotenv": "^16.3.1",
     "install": "^0.13.0",
     "jwks-rsa": "^3.1.0",
     "koa": "^2.14.2",
     "koa-jwt": "^4.0.4",
     "npm": "^10.2.4",
+    "pg": "^8.11.3",
+    "pg-hstore": "^2.3.4",
+    "qrcode": "^1.5.3",
+    "postmark": "^4.0.2",
     "reflect-metadata": "^0.1.13",
     "sequelize": "^6.35.0"
   },
@@ -85,7 +92,12 @@
       "!**/database.ts/**"
     ],
     "transform": {
-      "\\.ts$": "ts-jest"
+      "\\.ts$": [
+        "ts-jest",
+        {
+          "useESM": true
+        }
+      ]
     },
     "coverageThreshold": {
       "global": {
@@ -107,6 +119,12 @@
       "/migrations/",
       "/server.ts/",
       "/database.ts/"
-    ]
+    ],
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
+    }
   }
 }

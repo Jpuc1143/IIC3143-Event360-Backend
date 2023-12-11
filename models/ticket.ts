@@ -8,8 +8,11 @@ import {
   Default,
   DataType,
 } from "sequelize-typescript";
-import TicketType from "./ticketType";
-import User from "./user";
+import TicketType from "./ticketType.js";
+import User from "./user.js";
+
+import QRCode from "qrcode";
+import { PassThrough } from "stream";
 
 @Table
 export default class Ticket extends Model {
@@ -28,8 +31,12 @@ export default class Ticket extends Model {
   })
   userId!: UUID;
 
+  @Default(DataType.UUIDV4)
+  @Column(DataType.UUID)
+  secret: UUID;
+
   @BelongsTo(() => User)
-  user!: User;
+  public user!: Awaited<User>;
 
   @ForeignKey(() => TicketType)
   @Column
@@ -37,4 +44,10 @@ export default class Ticket extends Model {
 
   @BelongsTo(() => TicketType)
   ticketType!: TicketType;
+
+  getQR() {
+    const stream = new PassThrough();
+    QRCode.toFileStream(stream, this.secret, { scale: 10 });
+    return stream;
+  }
 }

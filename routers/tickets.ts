@@ -1,8 +1,8 @@
 import Router from "@koa/router";
-import Ticket from "../models/ticket";
-import TicketType from "../models/ticketType";
-import { Op } from "sequelize";
-import { verifyLogin } from "../middlewares/verifyLogin";
+import Ticket from "../models/ticket.js";
+import TicketType from "../models/ticketType.js";
+import User from "../models/user.js";
+import { verifyLogin } from "../middlewares/verifyLogin.js";
 
 export const router = new Router({ prefix: "/tickets" });
 
@@ -24,16 +24,21 @@ router.post("/", async (ctx, next) => {
     if (ticketType === null) {
       ctx.throw(404, "Tipo de ticket no encontrado");
     }
-    const ticketsBought = await Ticket.findAndCountAll({
-      where: {
-        ticketTypeId,
-        status: { [Op.or]: ["approved", "pending"] },
-      },
-    });
-    if (ticketType.amount - ticketsBought.count === 0) {
+    if ((await ticketType.getTicketsLeft()) === 0) {
       ctx.throw(400, "No quedan tickets disponibles");
     }
     const userId = ctx.state.currentUser.id;
+    const user = await User.findByPk(userId);
+    const userEmail = user.dataValues.email;
+    const domainWhitelist = ticketType.domainWhitelist;
+    const emailRegex = /@(.*)$/;
+    let userDomain;
+    if (userEmail) {
+      userDomain = userEmail.match(emailRegex)[1];
+    }
+    if (userEmail && !userDomain.includes(domainWhitelist)) {
+      ctx.throw(400, "El dominio del correo electrónico no está permitido");
+    }
     const newTicket = await Ticket.create({
       userId,
       ticketTypeId,
@@ -46,4 +51,22 @@ router.post("/", async (ctx, next) => {
     ctx.status = error.status || 500;
     ctx.body = error.message || { error: "Internal Server Error" };
   }
+});
+
+router.get("/:id/qr", verifyLogin, async (ctx, next) => {
+  const ticket = await Ticket.findByPk(ctx.params.id);
+  if (ticket.userId !== ctx.state.currentUser.id) {
+    ctx.throw(403, "Not allowed to read other tickets");
+  }
+  ctx.body = ticket.getQR();
+  ctx.status = 200;
+  ctx.type = "image/png";
+  await next();
+});
+
+router.patch("/:id/checkin", verifyLogin, async (ctx, next) => {
+  const ticket = await Ticket.findByPk(ctx.params.id);
+  ticket.status = "used";
+  await ticket.save();
+  await next();
 });

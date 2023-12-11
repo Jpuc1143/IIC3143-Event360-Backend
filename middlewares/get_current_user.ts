@@ -1,4 +1,4 @@
-import User from "../models/user";
+import User from "../models/user.js";
 
 export async function getCurrentUser(ctx, next) {
   if (ctx.state.user === undefined) {

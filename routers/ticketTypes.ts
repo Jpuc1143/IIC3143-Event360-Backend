@@ -1,8 +1,6 @@
 import Router from "@koa/router";
-import TicketType from "../models/ticketType";
+import TicketType from "../models/ticketType.js";
 // import Event from "../models/event";
-import Ticket from "../models/ticket";
-import { Op } from "sequelize";
 
 export const router = new Router({ prefix: "/tickettypes" });
 
@@ -11,25 +9,18 @@ router.get("/:id", async (ctx, next) => {
   if (ticketType === null) {
     ctx.throw(404, "Tipo de ticket no encontrado");
   }
-  const ticketsBought = await Ticket.findAndCountAll({
-    where: {
-      ticketTypeId: ctx.params.id,
-      status: { [Op.or]: { [Op.eq]: "approved", [Op.eq]: "pending" } },
-    },
-  });
-  ticketType.setDataValue(
-    "ticketsLeft",
-    ticketType.amount - ticketsBought.count,
-  );
+  const ticketsLeft = await ticketType.getTicketsLeft();
+  ticketType.setDataValue("ticketsLeft", ticketsLeft);
   ctx.response.body = ticketType;
   await next();
 });
 
 router.post("/", async (ctx, next) => {
   try {
-    const { eventId, price, amount, domainWhitelist } = ctx.request.body;
+    const { eventId, name, price, amount, domainWhitelist } = ctx.request.body;
     const newTicketType = await TicketType.create({
       eventId,
+      name,
       price,
       amount,
       domainWhitelist,
@@ -38,8 +29,8 @@ router.post("/", async (ctx, next) => {
     ctx.body = newTicketType;
     await next();
   } catch (error) {
-    ctx.status = 500;
-    ctx.body = { error: "Internal Server Error" };
+    ctx.status = 422;
+    ctx.body = { error: "Missing ticket types parameters" };
   }
 });
 

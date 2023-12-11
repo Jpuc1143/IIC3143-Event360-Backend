@@ -1,11 +1,11 @@
-import { app } from "./app";
-import { configureDatabase, closeDatabase } from "./database";
+import { app } from "./app.js";
+import { configureDatabase, closeDatabase } from "./database.js";
 
 const PORT = process.env.PORT || 8080;
 
 const startServer = async () => {
   try {
-    const db = await configureDatabase();
+    const db = await configureDatabase(false);
 
     app.context.db = db;
 

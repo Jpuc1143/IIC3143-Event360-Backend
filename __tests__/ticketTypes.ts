@@ -1,6 +1,7 @@
 import request from "supertest";
-import { app } from "../app";
-import { configureDatabase, closeDatabase } from "../database";
+import { app } from "../app.js";
+import { configureDatabase, closeDatabase } from "../database.js";
+import { jest } from "@jest/globals";
 
 const api = request(app.callback());
 let testUser, testEvent, testTicketType;
@@ -10,6 +11,8 @@ beforeAll(async () => {
   testUser = await app.context.db.models.User.create({
     auth: "example-auth-data",
   });
+  const endDate = new Date();
+  endDate.setHours(endDate.getHours() + 1);
   testEvent = await app.context.db.models.Event.create({
     userId: testUser.id,
     name: "Ombligo G19",
@@ -19,11 +22,12 @@ beforeAll(async () => {
     location: "Belly Beach",
     image: "loremipsum.com",
     startDate: new Date(),
-    endDate: new Date().getDate() + 3,
+    endDate: endDate,
     merchantCode: "12312321sdfs",
   });
   testTicketType = await app.context.db.models.TicketType.create({
     eventId: testEvent.id,
+    name: "Premium",
     price: 9990,
     amount: 100,
     domainWhitelist: "uc.cl",
@@ -45,6 +49,7 @@ describe("Test ticketTypes routes", () => {
       expect(response.body).toEqual({
         id: testTicketType.id,
         eventId: testEvent.id,
+        name: "Premium",
         price: 9990,
         amount: 100,
         domainWhitelist: "uc.cl",
@@ -56,12 +61,38 @@ describe("Test ticketTypes routes", () => {
   describe("Test POST routes", () => {
     test("POST /tickettypes", async () => {
       const prevCount = await app.context.db.models.TicketType.count();
-      const requestBody = { eventId: testEvent.id, price: 24990, amount: 150 };
+      const requestBody = {
+        eventId: testEvent.id,
+        name: "General",
+        price: 24990,
+        amount: 150,
+      };
       const response = await api.post("/tickettypes").send(requestBody);
       expect(response.status).toBe(201);
       expect(await app.context.db.models.TicketType.count()).toEqual(
         prevCount + 1,
       );
+    });
+    describe("Catching error", () => {
+      test("POST /tickettypes", async () => {
+        jest
+          .spyOn(app.context.db.models.TicketType, "create")
+          .mockRejectedValueOnce(new Error());
+        const prevCount = await app.context.db.models.TicketType.count();
+        const requestBody = {
+          eventId: testEvent.id,
+          price: 24990,
+          amount: 150,
+        };
+        const response = await api.post("/tickettypes").send(requestBody);
+        expect(response.status).toBe(422);
+        expect(response.body).toEqual({
+          error: "Missing ticket types parameters",
+        });
+        expect(await app.context.db.models.TicketType.count()).toEqual(
+          prevCount,
+        );
+      });
     });
   });
 
@@ -78,8 +109,12 @@ describe("Test ticketTypes routes", () => {
 
   describe("Test DELETE routes", () => {
     test("DELETE /tickettypes/:id", async () => {
+      const prevCount = await app.context.db.models.TicketType.count();
       const response = await api.delete(`/tickettypes/${testTicketType.id}`);
       expect(response.status).toBe(204);
+      expect(await app.context.db.models.TicketType.count()).toEqual(
+        prevCount - 1,
+      );
     });
   });
 
